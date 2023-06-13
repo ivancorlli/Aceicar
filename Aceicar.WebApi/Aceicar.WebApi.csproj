@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Modules\IdContext\IdContext.Infrastructure\IdContext.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\IdContext\IdContext.Api\IdContext.Api.csproj" />
+    <ProjectReference Include="..\Modules\IdContext\IdContext.Web\IdContext.Web.csproj" />
+  </ItemGroup>
+
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.5" />
+  </ItemGroup>
+</Project>
