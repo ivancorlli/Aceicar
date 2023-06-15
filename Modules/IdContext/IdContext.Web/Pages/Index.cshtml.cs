@@ -1,4 +1,6 @@
 ﻿using System.Security.Claims;
+using IdContext.Application.Command.Generate2FactorToken;
+using IdContext.Application.Enumerable;
 using IdContext.Core.Entity;
 using IdContext.Core.Enumerable;
 using IdContext.Web.Options;
@@ -9,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Options;
+using Wolverine;
 
 namespace IdContext.Web.Pages;
 
@@ -20,6 +23,7 @@ public class IndexModel : PageModel
     private readonly UserManager<User> _userManager;
     private readonly IUserStore<User> _userStore;
     private readonly IUserLoginStore<User> _userLogin;
+    private readonly IMessageBus _bus;
     public string? ReturnUrl { get; set; } = string.Empty;
     public string Error { get; set; } = string.Empty;
     public List<AuthenticationScheme> ExternalLogins { get; set; } = new();
@@ -31,7 +35,8 @@ public class IndexModel : PageModel
         IOptions<RedirectUrlOptions> defaultReturnUrl,
         UserManager<User> userManager,
         SignInManager<User> signIn,
-        IUserStore<User> userStore
+        IUserStore<User> userStore,
+        IMessageBus bus
     )
     {
         _logger = logger;
@@ -40,6 +45,7 @@ public class IndexModel : PageModel
         _userManager = userManager;
         _userStore = userStore;
         _userLogin = GetLogins();
+        _bus = bus;
     }
 
     private IUserLoginStore<User> GetLogins()
@@ -205,28 +211,20 @@ public class IndexModel : PageModel
                 }
                 else if (result.RequiresTwoFactor)
                 {
-                    string Code;
-                    string Token;
-                    if (user.PhoneNumber is null || !user.PhoneNumberConfirmed)
-                    {
-                        Token = "Email";
-                        Code = await _userManager.GenerateTwoFactorTokenAsync(user, Token);
-                        await _messageSender.Send(Message.SendEmailTwoFactor(
-                            user.Id,
-                            user.Email!,
-                            Code
-                        ));
-                    }
-                    else
-                    {
-                        Token = "Phone";
-                        Code = await _userManager.GenerateTwoFactorTokenAsync(user, Token);
-                        await _messageSender.Send(Message.SendPhoneTwoFactor(
-                            user.Id,
-                            user.PhoneNumber,
-                            Code
-                        ));
-                    }
+                   						string Code;
+						TwoFactorToken Token;
+						if (user.PhoneNumber is null || !user.PhoneNumberConfirmed)
+						{
+							Token = TwoFactorToken.Email;
+							Code = await _userManager.GenerateTwoFactorTokenAsync(user, Token.ToString());
+							await _bus.InvokeAsync(new Generate2FactorTokenCommand(user.Id,user.Email!,Code,TwoFactorToken.Email));
+						}
+						else
+						{
+							Token = TwoFactorToken.Phone;
+							Code = await _userManager.GenerateTwoFactorTokenAsync(user, Token.ToString());
+							await _bus.InvokeAsync(new Generate2FactorTokenCommand(user.Id,user.Email!,Code,TwoFactorToken.Phone));
+						}
                     return RedirectToPage($"/{_redirectUrl.Value.TwoFactor}", new { ReturnUrl, Login.Remember, Token });
                 }
                 else
