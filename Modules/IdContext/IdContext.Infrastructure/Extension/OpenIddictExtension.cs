@@ -77,7 +77,7 @@ internal static class OpenIddictExtension
                     }
 
                     // Issuer
-                    options.SetIssuer(new Uri("https://localhost:5005"));
+                    options.SetIssuer(new Uri("https://localhost:5000"));
                 });
 
             });

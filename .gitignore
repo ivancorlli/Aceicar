@@ -477,3 +477,5 @@ $RECYCLE.BIN/
 *.lnk
 Aceicar.WebApi/Key
 ./Aceicar.WebApi/Key
+Aceicar.WebApi/Internal
+./Aceicar.WebApi/Internal

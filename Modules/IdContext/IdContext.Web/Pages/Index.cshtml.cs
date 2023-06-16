@@ -86,8 +86,8 @@ public class IndexModel : PageModel
                     // If user exists, refresh his authentication cookie
                     await _signIn.RefreshSignInAsync(user);
                     // If phone number is not set, redirect to page
-                    if (user.PhoneNumber is null) return RedirectToPage($"/{_redirectUrl.Value.QuickStart}", new { ReturnUrl });
-                    else if (user.PhoneNumber is not null && !user.PhoneNumberConfirmed) return RedirectToPage($"/{_redirectUrl.Value.VerifyPhone}", new { ReturnUrl });
+                    if (user.PhoneNumber is null) return Redirect(_redirectUrl.Value.QuickStart);
+                    else if (user.PhoneNumber is not null && !user.PhoneNumberConfirmed) return Redirect(_redirectUrl.Value.VerifyPhone);
                     else return new RedirectResult(ReturnUrl);
                 }
             }

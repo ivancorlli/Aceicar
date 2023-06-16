@@ -1,5 +1,6 @@
 
 using IdContext.Infrastructure.Extension;
+using IdContext.Web.Extension;
 
 public static class ModulesExtensions
 {
@@ -8,6 +9,7 @@ public static class ModulesExtensions
     {
         // Install Id Context
         services.InstallIdInfrastructure(configuration,environment);
+        services.InstallIdWeb(configuration);
         return services;
     }
 

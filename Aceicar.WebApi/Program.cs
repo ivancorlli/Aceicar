@@ -1,4 +1,7 @@
 
+using Aceicar.WebApi.Extension;
+using Oakton;
+
 var _builder = WebApplication.CreateBuilder(args);
 
 IServiceCollection services = _builder.Services;
@@ -12,7 +15,8 @@ services.InstallKey(_builder.Environment);
 services.InstallCookies(_builder.Configuration);
 // Auth Schema
 services.AddAuthorization();
-
+// Install Wolverine
+services.InstallWolverine(_builder.Host,_builder.Configuration);
 
 var app = _builder.Build();
 
@@ -25,7 +29,7 @@ app.UseAuthorization();
 
 app.MapDefaultControllerRoute();
 app.MapRazorPages();
-app.Run();
+return await app.RunOaktonCommands(args);
 
 
 

@@ -6,11 +6,11 @@ public static class CookieExtension
         services.ConfigureApplicationCookie(opts =>
         {
             // paths
-            opts.LoginPath = "/signin";
+            opts.LoginPath = "/";
             opts.AccessDeniedPath = "";
-            opts.ReturnUrlParameter = configuration["ReturnUrl:Default"]!.ToString();
+            opts.ReturnUrlParameter = configuration["RedirectUrl:Home"]!.ToString();
             opts.SlidingExpiration = true;
-            opts.ClaimsIssuer = "https://localhost:5005";
+            opts.ClaimsIssuer = "https://localhost:5000";
             // Cookie config
             opts.Cookie.Name = "_SIP";
             opts.Cookie.SameSite = SameSiteMode.Strict;

@@ -33,7 +33,7 @@ public static class IdInfrastructure
                 x => x.EnableRetryOnFailure()
                 );
             o.UseOpenIddict();
-        });
+        },optionsLifetime:ServiceLifetime.Singleton);
 
         return services;
     }

@@ -15,5 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.5" />
+    <PackageReference Include="WolverineFx.EntityFrameworkCore" Version="0.9.19" />
+    <PackageReference Include="WolverineFx.Postgresql" Version="0.9.19" />
   </ItemGroup>
 </Project>
