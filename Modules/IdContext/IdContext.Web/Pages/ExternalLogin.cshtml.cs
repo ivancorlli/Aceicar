@@ -1,6 +1,3 @@
-using IdContext.Application.Command.Generate2FactorToken;
-using IdContext.Application.Command.SendWelcome;
-using IdContext.Application.Enumerable;
 using IdContext.Core.Constant;
 using IdContext.Core.Entity;
 using IdContext.Core.Enumerable;
@@ -12,6 +9,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using Wolverine;
+using IdContext.Application.Command.GenerateTwoFactor;
+using IdContext.Application.Command.CreateExternalUser;
 
 namespace IdContext.Web.Pages;
 
@@ -114,20 +113,7 @@ public class ExternalLogin : PageModel
                             }
                             else if (resul.RequiresTwoFactor)
                             {
-                                string Code;
-                                TwoFactorToken Token;
-                                if (user.PhoneNumber is null || !user.PhoneNumberConfirmed)
-                                {
-                                    Token = TwoFactorToken.Email;
-                                    Code = await _userManager.GenerateTwoFactorTokenAsync(user, Token.ToString());
-                                    await _bus.InvokeAsync(new Generate2FactorTokenCommand(user.Id, user.Email!, Code, TwoFactorToken.Email));
-                                }
-                                else
-                                {
-                                    Token = TwoFactorToken.Phone;
-                                    Code = await _userManager.GenerateTwoFactorTokenAsync(user, Token.ToString());
-                                    await _bus.InvokeAsync(new Generate2FactorTokenCommand(user.Id, user.Email!, Code, TwoFactorToken.Phone));
-                                }
+                                string Token = await _bus.InvokeAsync<string>(new GenerateTwoFactorCommand(user.Id));
                                 return RedirectToPage($"/{_redirectUrl.Value.TwoFactor}", new { ReturnUrl, Remember = true, Token });
                             }
                             else if (resul.IsNotAllowed)
@@ -162,57 +148,28 @@ public class ExternalLogin : PageModel
                 else
                 // If the user dont have any account with this email, we create a new user
                 {
-                    // Create a new external account
-                    user = IdContext.Core.Entity.User.CreateExternalUser(email);
-                    // save in database
-                    var result = await _userManager.CreateAsync(user);
-                    if (result.Succeeded)
+                    user = await _bus.InvokeAsync<User?>(new CreateExternalUserCommand(email, info));
+                    if (user is not null)
                     {
-                        // Aggreagate a rol, bydeafult an application role
-                        bool role = await _roleManager.RoleExistsAsync(DefaultRoles.ApplicationUser);
-                        if (role) await _userManager.AddToRoleAsync(user, DefaultRoles.ApplicationUser);
-                        else await _userManager.AddToRoleAsync(user, DefaultRoles.DefaultUser);
+                        var Result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
 
-
-                        // save the provider
-                        result = await _userManager.AddLoginAsync(user, info);
-                        if (result.Succeeded)
+                        if (Result.Succeeded)
                         {
-                            var Result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
-
-                            if (Result.Succeeded)
-                            {
-                                await _bus.InvokeAsync(new SendWelcomeCommand(user.Id, user.Email!));
-                                if (user.PhoneNumber is null) return RedirectToPage($"/{_redirectUrl.Value.QuickStart}", new { ReturnUrl });
-                                else if (user.PhoneNumber is not null && !user.PhoneNumberConfirmed) return RedirectToPage($"/{_redirectUrl.Value.VerifyPhone}", new { ReturnUrl });
-                                else return new RedirectResult(ReturnUrl);
-                            }
-                            else
-                            {
-                                Error = $"Se produjo un error al obtener tus datos de {info.ProviderDisplayName}.";
-                                AllowBack = true;
-                                return Page();
-                            }
+                            if (user.PhoneNumber is null) return RedirectToPage($"/{_redirectUrl.Value.QuickStart}", new { ReturnUrl });
+                            else if (user.PhoneNumber is not null && !user.PhoneNumberConfirmed) return RedirectToPage($"/{_redirectUrl.Value.VerifyPhone}", new { ReturnUrl });
+                            else return new RedirectResult(ReturnUrl);
                         }
                         else
                         {
-                            // if there is any error saving the provider
-                            foreach (var error in result.Errors)
-                            {
-                                Error = error.Description;
-                                break;
-                            }
+                            Error = $"Se produjo un error al obtener tus datos de {info.ProviderDisplayName}.";
+                            AllowBack = true;
                             return Page();
                         }
                     }
                     else
                     {
                         // Errors creating user
-                        foreach (var error in result.Errors)
-                        {
-                            Error = error.Description;
-                            break;
-                        }
+                        Error = "Se produjo un error al crear usuario";
                         return Page();
                     }
                 }
@@ -237,20 +194,7 @@ public class ExternalLogin : PageModel
                     }
                     else if (result.RequiresTwoFactor)
                     {
-                        string Code;
-                        TwoFactorToken Token;
-                        if (user.PhoneNumber is null || !user.PhoneNumberConfirmed)
-                        {
-                            Token = TwoFactorToken.Email;
-                            Code = await _userManager.GenerateTwoFactorTokenAsync(user, Token.ToString());
-                            await _bus.InvokeAsync(new Generate2FactorTokenCommand(user.Id, user.Email!, Code, TwoFactorToken.Email));
-                        }
-                        else
-                        {
-                            Token = TwoFactorToken.Phone;
-                            Code = await _userManager.GenerateTwoFactorTokenAsync(user, Token.ToString());
-                            await _bus.InvokeAsync(new Generate2FactorTokenCommand(user.Id, user.Email!, Code, TwoFactorToken.Phone));
-                        }
+                        string Token = await _bus.InvokeAsync<string>(new GenerateTwoFactorCommand(user.Id));
                         return RedirectToPage($"/{_redirectUrl.Value.TwoFactor}", new { ReturnUrl, Remember = true, Token });
                     }
                     else if (result.IsNotAllowed)

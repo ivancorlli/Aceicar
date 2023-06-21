@@ -4,6 +4,9 @@
     <ProjectReference Include="..\Modules\IdContext\IdContext.Infrastructure\IdContext.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\IdContext\IdContext.Api\IdContext.Api.csproj" />
     <ProjectReference Include="..\Modules\IdContext\IdContext.Web\IdContext.Web.csproj" />
+    <ProjectReference Include="..\Modules\Common\Common.IntegrationEvents\Common.IntegrationEvents.csproj" />
+    <ProjectReference Include="..\Modules\NotificationSystem\NotificationSystem.Application\NotificationSystem.Application.csproj" />
+    <ProjectReference Include="..\Modules\NotificationSystem\NotificationSystem.Infrastructure\NotificationSystem.Infrastructure.csproj" />
   </ItemGroup>
 
 

@@ -1,6 +1,5 @@
 using System.Security.Cryptography.X509Certificates;
 using IdContext.Infrastructure.Context;
-using IdContext.Infrastructure.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,7 +29,8 @@ internal static class OpenIddictExtension
 
                     options
                         .SetAuthorizationEndpointUris("/oauth/authorize")
-                        .SetTokenEndpointUris("/oauth/token");
+                        .SetTokenEndpointUris("/oauth/token")
+                        .SetLogoutEndpointUris("/oauth/logout");
 
                     // Encryption and signing of tokens
                     if (env.EnvironmentName != "Production")

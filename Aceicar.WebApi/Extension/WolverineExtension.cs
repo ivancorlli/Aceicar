@@ -3,6 +3,7 @@ using Wolverine;
 using Wolverine.EntityFrameworkCore;
 using Wolverine.Postgresql;
 
+
 namespace Aceicar.WebApi.Extension;
 
 public static class WolverineExtension
@@ -31,9 +32,17 @@ public static class WolverineExtension
             // Add the auto transaction middleware attachment policy. With this option, you will no longer need to decorate handler methods with the [Transactional] attribute.
             o.Policies.AutoApplyTransactions();
 
-            // instalar assambleys
+            // Instalar Assemblies
+
+            // - Common/IntegrationEvents
+             o.Discovery.IncludeAssembly(typeof(Common.IntegrationEvents.UserCreated).Assembly);
+            // - IdContext/Web 
             o.Discovery.IncludeAssembly(typeof(IdContext.Web.Extension.IdContextWebExtension).Assembly);
-            o.Discovery.IncludeAssembly(typeof(IdContext.Application.Command.SendWelcome.SendWelcomeCommand).Assembly);
+            // - IdContext/Application
+            o.Discovery.IncludeAssembly(typeof(IdContext.Application.Command.CreateExternalUser.CreateExternalUserHandler).Assembly);
+
+            // - NotificationSystem/Application
+            o.Discovery.IncludeAssembly(typeof(NotificationSystem.Application.Command.UserCreatedEvent.UserCreatedHandler).Assembly);
         });
 
         // This is rebuilding the persistent storage database schema on startup

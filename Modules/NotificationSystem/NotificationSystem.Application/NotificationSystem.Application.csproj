@@ -1,13 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\IdContext.Core\IdContext.Core.csproj" />
     <ProjectReference Include="..\..\Common\Common.IntegrationEvents\Common.IntegrationEvents.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="WolverineFx" Version="0.9.19" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
   </ItemGroup>
 
   <PropertyGroup>

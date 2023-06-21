@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
-using IdContext.Application.Command.Generate2FactorToken;
-using IdContext.Application.Enumerable;
+using IdContext.Application.Command.GenerateTwoFactor;
 using IdContext.Core.Entity;
 using IdContext.Core.Enumerable;
 using IdContext.Web.Options;
@@ -211,20 +210,7 @@ public class IndexModel : PageModel
                 }
                 else if (result.RequiresTwoFactor)
                 {
-                   						string Code;
-						TwoFactorToken Token;
-						if (user.PhoneNumber is null || !user.PhoneNumberConfirmed)
-						{
-							Token = TwoFactorToken.Email;
-							Code = await _userManager.GenerateTwoFactorTokenAsync(user, Token.ToString());
-							await _bus.InvokeAsync(new Generate2FactorTokenCommand(user.Id,user.Email!,Code,TwoFactorToken.Email));
-						}
-						else
-						{
-							Token = TwoFactorToken.Phone;
-							Code = await _userManager.GenerateTwoFactorTokenAsync(user, Token.ToString());
-							await _bus.InvokeAsync(new Generate2FactorTokenCommand(user.Id,user.Email!,Code,TwoFactorToken.Phone));
-						}
+                    string Token = await _bus.InvokeAsync<string>(new GenerateTwoFactorCommand(user.Id));
                     return RedirectToPage($"/{_redirectUrl.Value.TwoFactor}", new { ReturnUrl, Login.Remember, Token });
                 }
                 else

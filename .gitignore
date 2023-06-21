@@ -476,6 +476,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 Aceicar.WebApi/Key
+Aceicar.WebApi\Key
 ./Aceicar.WebApi/Key
 Aceicar.WebApi/Internal
+Aceicar.WebApi\Internal
 ./Aceicar.WebApi/Internal
