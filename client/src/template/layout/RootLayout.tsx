@@ -1,14 +1,11 @@
 'use client'
 import SidebarLarge from "@/component/Sidebar/SidebarLarge"
 import { Container, Grid, GridItem, Hide, Show } from "@chakra-ui/react"
-import { useSession } from "next-auth/react"
 import React from "react"
 
 
 
 function RootLayout({ children }: { children: React.ReactNode }) {
-    const { data: session, status } = useSession()
-    console.log(session,status);
     return (
         <>
             <Container w='100%' p='0' maxW={['100%', '100%', '100%', '100%', '100%', '90%']}>

@@ -1,11 +1,14 @@
 'use client'
 
+import { Link } from '@chakra-ui/next-js';
 import { Button, Container, Divider, VStack, useColorMode } from '@chakra-ui/react'
-import { signIn } from 'next-auth/react';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import React from 'react'
 
 const SidebarLarge = () => {
   const {colorMode} = useColorMode();
+  const { user, error, isLoading } = useUser();
+  console.log(user)
   return (
     <VStack
       w='100%'
@@ -23,11 +26,11 @@ const SidebarLarge = () => {
       </Container>
       <Container w='100%' >
         {
-
-
           <VStack w='100%' spacing={5}>
             <Divider />
-            <Button onClick={()=>signIn("aceicar")} >Iniciar Sesion</Button>
+            <Link href="/api/auth/login">
+              Iniciar Sesion
+            </Link>
           </VStack>
         }
       </Container>

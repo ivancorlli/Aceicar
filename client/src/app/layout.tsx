@@ -1,5 +1,6 @@
 import Provider from '@/theme/Provider'
 import Layout from '@/template/layout/RootLayout'
+import NextAuth from '@/utils/NextAuth'
 
 export const metadata = {
   title: 'Create Next App',
@@ -19,11 +20,13 @@ export default function RootLayout({
       */}
       <head />
       <body style={{ width: '100%' }}>
+        <NextAuth>
           <Provider>
             <Layout>
               {children}
             </Layout>
           </Provider>
+        </NextAuth>
       </body>
     </html >
 

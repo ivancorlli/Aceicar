@@ -48,7 +48,7 @@ public class SeedProviderApi : IHostedService
 						DisplayName= _providerClient.Value.Name,
 						ClientId = _providerClient.Value.ClientId.Trim(),
 						ClientSecret = _providerClient.Value.ClientSecret.Trim(),
-						RedirectUris = {new Uri(_providerClient.Value.LoginUrl)},
+						RedirectUris = {new Uri(_providerClient.Value.LoginUrl.Trim())},
 						PostLogoutRedirectUris = {new Uri(_providerClient.Value.LogoutUrl)},
 						Permissions = {
 							OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
