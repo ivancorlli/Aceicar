@@ -187,7 +187,7 @@ public class ExternalLogin : PageModel
                     var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
                     if (result.Succeeded)
                     {
-                        if (user.PhoneNumber is null) return RedirectToPage($"/{_redirectUrl.Value.QuickStart}", new { ReturnUrl });
+                        if (user.PhoneNumber is null) return Redirect(_redirectUrl.Value.QuickStart);
                         else if (user.PhoneNumber is not null && !user.PhoneNumberConfirmed) return RedirectToPage($"/{_redirectUrl.Value.VerifyPhone}", new { ReturnUrl });
                         else return new RedirectResult(ReturnUrl);
 
