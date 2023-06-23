@@ -9,10 +9,6 @@ services.AddRazorPages();
 
 // Install Modules
 services.InstallModules(_builder.Configuration,_builder.Environment);
-// Install key
-services.InstallKey(_builder.Environment);
-// Configure Cookies
-services.InstallCookies(_builder.Configuration);
 // Auth Schema
 services.AddAuthorization();
 // Install Wolverine
@@ -20,7 +16,6 @@ services.InstallWolverine(_builder.Host,_builder.Configuration);
 
 var app = _builder.Build();
 
-app.UseStaticFiles();
 app.UseCookiePolicy();
 app.UseRouting();
 

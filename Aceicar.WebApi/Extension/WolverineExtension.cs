@@ -34,13 +34,6 @@ public static class WolverineExtension
 
             // Instalar Assemblies
 
-            // - Common/IntegrationEvents
-             o.Discovery.IncludeAssembly(typeof(Common.IntegrationEvents.UserCreated).Assembly);
-            // - IdContext/Web 
-            o.Discovery.IncludeAssembly(typeof(IdContext.Web.Extension.IdContextWebExtension).Assembly);
-            // - IdContext/Application
-            o.Discovery.IncludeAssembly(typeof(IdContext.Application.Command.CreateExternalUser.CreateExternalUserHandler).Assembly);
-
             // - NotificationSystem/Application
             o.Discovery.IncludeAssembly(typeof(NotificationSystem.Application.Command.UserCreatedEvent.UserCreatedHandler).Assembly);
         });
