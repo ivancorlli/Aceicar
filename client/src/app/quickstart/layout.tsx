@@ -1,8 +1,11 @@
+import QuickStartLayout from '@/template/quickstart/QuickStartLayout'
 import React from 'react'
 
-const layout = () => {
+const layout = ({children}:{children:React.ReactNode}) => {
   return (
-    <div>layout</div>
+    <QuickStartLayout>
+      {children}
+    </QuickStartLayout>
   )
 }
 

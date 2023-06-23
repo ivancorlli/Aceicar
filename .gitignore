@@ -494,6 +494,8 @@ Aceicar.WebApi\Internal
 
 # next.js
 /.next/
+client/.next/
+client/.next
 /out/
 
 # production

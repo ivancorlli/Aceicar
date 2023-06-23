@@ -1,12 +1,14 @@
 'use client'
 
-import { Link } from '@chakra-ui/next-js';
-import { Button, Container, Divider, VStack, useColorMode } from '@chakra-ui/react'
+import { SlHome, SlLogin } from 'react-icons/sl';
+import {BiSolidHome} from 'react-icons/bi'
+import {  Container, Divider, VStack, useColorMode } from '@chakra-ui/react'
 import { useUser } from '@auth0/nextjs-auth0/client';
 import React from 'react'
+import SidebarButton from './Button/SidebarButton';
 
 const SidebarLarge = () => {
-  const {colorMode} = useColorMode();
+  const { colorMode } = useColorMode();
   const { user, error, isLoading } = useUser();
   console.log(user)
   return (
@@ -20,17 +22,16 @@ const SidebarLarge = () => {
       borderRight='1px'
       borderColor={colorMode == 'light' ? 'gray.100' : 'whiteAlpha.200'}
     >
-      <Container w='100%' >
-        <VStack w='100%' spacing={5} alignItems='start' paddingX='10px' >
+      <Container w='100%' m="0" px="5px" >
+        <VStack w='100%' spacing={5} alignItems='start'>
+        <SidebarButton icon={BiSolidHome} text='Inicio' link='/' />
         </VStack>
       </Container>
-      <Container w='100%' >
+      <Container w='100%' px="5px" m="0" >
         {
-          <VStack w='100%' spacing={5}>
+          <VStack w='100%' spacing={5} alignItems="start">
             <Divider />
-            <Link href="/api/auth/login">
-              Iniciar Sesion
-            </Link>
+            <SidebarButton icon={SlLogin} text='Iniciar Sesion' link='/api/auth/login' />
           </VStack>
         }
       </Container>
