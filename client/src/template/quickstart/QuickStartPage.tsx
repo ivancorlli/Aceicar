@@ -1,8 +1,62 @@
 'use client'
-import UserAccount from '@/component/Card/UserAccount'
-import { Button, FormControl, Input, InputGroup, InputLeftAddon, VStack } from '@chakra-ui/react'
-import React, { ChangeEvent, FormEvent, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+
+import UserAccount from "@/component/Card/UserAccount";
+import { Button, Input, InputGroup, InputLeftAddon, VStack } from "@chakra-ui/react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { ChangeEvent, FormEvent, useContext, useEffect, useLayoutEffect, useState } from "react";
+import { QuickStartContext } from "./QuickStartLayout";
+import PhoneVerification from "./PhoneVerification";
+import ProfileConfiguration from "./ProfileConfiguration";
+import LocationConfiguration from "./LocationConfiguration";
+
+
+function QuickStartPage() {
+    const params = useSearchParams()?.get("num")
+    const Advance = useContext(QuickStartContext)
+
+    useEffect(() => {
+        console.log(params)
+        getPosition()
+    }, [params])
+
+    function getPosition(): void {
+        switch (params) {
+            case null:
+                Advance(0)
+                break;
+            case "1":
+                Advance(1)
+                break;
+            case "2":
+                Advance(2)
+                break;
+            case "3":
+                Advance(3)
+                break;
+            default:
+                Advance(0)
+        }
+    }
+
+    switch (params) {
+        case null:
+            return <SetpOne />
+        case "0":
+            return <PhoneVerification />
+        case "1":
+            return <ProfileConfiguration />
+        case "2":
+            return <LocationConfiguration />
+        case "3":
+            return <>Configuracion Terminada</>
+        default:
+            break;
+
+    }
+
+}
+
+
 
 interface IintialForm {
     username: string,
@@ -12,42 +66,41 @@ const intialForm: IintialForm = {
     username: "",
     phoneNumber: ""
 }
-
-export const QuickStartPage = () => {
+function SetpOne() {
     const [form, setForm] = useState(intialForm);
     const router = useRouter()
-    const params = useSearchParams()?.get("num")
-    function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
+
+    function handleChange(e: ChangeEvent<HTMLInputElement>) {
         setForm({
             ...form,
             [e.target.name]: e.target.value
         });
-
     }
 
     function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault()
-        router.push("/quickstart?num=1")
-        console.log("submit")
-        console.log(params)
-
+        router.push("/quickstart?num=0")
     }
 
     return (
-        <VStack spacing={8} w="100%" alignItems="center" justifyContent="center">
-            <UserAccount form={form} />
-            <form onSubmit={(e) => handleSubmit(e)} style={{ width: "35%", display: "flex", flexDirection: "column", alignItems:"center",justifyContent:"center",gap:"2rem" }}>
-                <VStack w="100%">
-                    <Input name='username' defaultValue={form.username} onChange={(e) => handleInputChange(e)} variant='filled' type="text" autoCapitalize="true" autoComplete="text" placeholder='Nombre de usuario' bg="white" />
-                    <InputGroup>
-                        <InputLeftAddon children='+54' />
-                        <Input name='phoneNumber' defaultValue={form.phoneNumber} onChange={(e) => handleInputChange(e)} variant='filled' type="tel" autoComplete="tel" placeholder='Telefono' bg="white" />
-                    </InputGroup>
-                </VStack>
-                <Button type="submit"  bg="black" color="white" variant='solid' w="50%">
-                    Continuar
-                </Button>
-            </form>
-        </VStack>
+        <>
+            <VStack w="100%" >
+                <UserAccount form={form} />
+                <form onSubmit={(e) => handleSubmit(e)} style={{ width: "35%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "2rem" }}>
+                    <VStack w="100%">
+                        <Input name='username' defaultValue={form.username} onChange={(e) => handleChange(e)} variant='filled' type="text" autoCapitalize="true" autoComplete="text" placeholder='Nombre de usuario' borderColor="brand.100" bg="white" _focus={{ borderColor: "brand.100" }} />
+                        <InputGroup>
+                            <InputLeftAddon children='+54' bg="brand.100" color="white" borderColor="brand.100" />
+                            <Input name='phoneNumber' defaultValue={form.phoneNumber} onChange={(e) => handleChange(e)} variant='filled' type="tel" autoComplete="tel" placeholder='Telefono' borderColor="#brand.100" _focus={{ borderColor: "brand.100" }} bg="white" />
+                        </InputGroup>
+                    </VStack>
+                    <Button type="submit" bg="brand.100" color="white" variant='solid' w="50%" _hover={{ bg: "black" }}>
+                        Continuar
+                    </Button>
+                </form>
+                
+            </VStack>
+        </>
     )
 }
+export default QuickStartPage

@@ -35,7 +35,7 @@ function RootLayout({ children }: { children: React.ReactNode }) {
 function Content({ children }: { children: React.ReactNode }) {
     return (
         <>
-            <GridItem w="100%" h='100vh' p='0' className="content" bg="blackAlpha.50">
+            <GridItem w="100%" h='100%' px={["10xpx"]} className="content" bg="brand.200">
                 {children}
             </GridItem>
         </>
@@ -46,7 +46,13 @@ function Content({ children }: { children: React.ReactNode }) {
 function SideBars({ children }: { children: React.ReactNode }) {
     return (
         <>
-            <GridItem h='100vh' position='sticky' top={0} left={0} bg="white">
+            <GridItem 
+            h='100vh' 
+            bg="white"
+            position="sticky"
+            top="0"
+            left="0"
+            >
                 {children}
             </GridItem>
 

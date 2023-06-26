@@ -1,4 +1,4 @@
-import { QuickStartPage } from '@/template/quickstart/QuickStartPage'
+import QuickStartPage  from '@/template/quickstart/QuickStartPage'
 import React from 'react'
 
 const page = () => {

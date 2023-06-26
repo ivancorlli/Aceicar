@@ -15,10 +15,10 @@ const UserAccount = ({form = intialForm}:{form?:IintialForm}) => {
   return (
         <>
             <VStack>
-                <Avatar name={form.username ?? "Nombre de Usuario"} bg="black" color="white" size="2xl" />
-                <VStack>
-                    <Text>
-                        {form.username}
+                <Avatar name={form.username ?? "Nombre de Usuario"} bg={form.username ? "brand.100" : "gray"} color="white" size="2xl" />
+                <VStack spacing={0}>
+                    <Text fontSize="lg" fontWeight="bold" >
+                        {form.username.toLocaleUpperCase()}
                     </Text>
                     <Text fontSize="sm" color="gray" >
                         {form.phoneNumber}

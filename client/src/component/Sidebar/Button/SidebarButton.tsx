@@ -15,13 +15,17 @@ const SidebarButton = (props: Props) => {
     return (
         <Link href={props.link} style={{ width: "100%"}}>
             <HStack 
-            _hover={ params == props.link ? { bg: "white", color: "black", borderRadius:"md"}:{ bg: "black", color: "white", borderRadius:"md"}}
-            bg={params == props.link ? "black" : "white"}
-            color={params == props.link ? "white":"black"}
+            _hover={{ bg: "brand.100", color: "white", borderRadius:"md"}}
+            bg={params == props.link ? "brand.100" : "white"}
+            color={params == props.link ? "white":"brand.100"}
             borderRadius={params == props.link ? "md" : "none"}
             padding="10px" >
-                <Icon as={props.icon}w={5} h={5} />
-                <Text>
+                <Icon as={props.icon}w={5} h={5}/>
+                <Text 
+                fontWeight={"light"}
+                lineHeight="1"
+                letterSpacing="0"
+                >
                     {props.text}
                 </Text>
             </HStack>
