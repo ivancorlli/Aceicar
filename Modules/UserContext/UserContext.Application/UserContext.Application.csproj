@@ -1,5 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <ItemGroup>
+    <ProjectReference Include="..\UserContext.Core\UserContext.Core.csproj" />
+    <ProjectReference Include="..\..\Common\Common.Basis\Common.Basis.csproj" />
+    <ProjectReference Include="..\..\Common\Common.IntegrationEvents\Common.IntegrationEvents.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>

@@ -1,11 +1,15 @@
 
 using Aceicar.WebApi.Extension;
 using Oakton;
+using UserContext.Application.Feature.ApplicationUser.Command.CreateUser;
+using Wolverine;
 
 var _builder = WebApplication.CreateBuilder(args);
 
+_builder.Host.ApplyOaktonExtensions();
+
 IServiceCollection services = _builder.Services;
-services.AddRazorPages();
+
 
 // Install Modules
 services.InstallModules(_builder.Configuration,_builder.Environment);
@@ -16,15 +20,17 @@ services.InstallWolverine(_builder.Host,_builder.Configuration);
 
 var app = _builder.Build();
 
-app.UseCookiePolicy();
-app.UseRouting();
-
-app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapDefaultControllerRoute();
-app.MapRazorPages();
+app.MapGet("/init",(IMessageBus _bus)=>{
+
+    _bus.InvokeAsync(new CreateUserCommand("corlliivan@gmail.com"));
+
+});
+
+
 return await app.RunOaktonCommands(args);
+
 
 
 

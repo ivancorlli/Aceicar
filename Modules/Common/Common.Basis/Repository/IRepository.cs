@@ -2,8 +2,8 @@ using Common.Basis.Aggregate;
 
 namespace Common.Basis.Repository;
 
-public interface IRepository<Aggregate,Id> where Aggregate: IAggregate<Id>
+public interface IRepository<Aggregate> where Aggregate: IAggregate
 {
     void Save(Aggregate Root);
-    Aggregate? FindById(Id Id);
+    Aggregate? FindById(Guid Id);
 }

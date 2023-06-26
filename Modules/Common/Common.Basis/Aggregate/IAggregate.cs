@@ -2,9 +2,8 @@ using System.Text.Json.Serialization;
 
 namespace Common.Basis.Aggregate;
 
-public abstract class IAggregate<T>
+public abstract class IAggregate
 {
-    public T Id { get; protected set; } = default!;
 
     // For protecting the state, i.e. conflict prevention
     // The setter is only public for setting up test conditions

@@ -2,4 +2,4 @@ using UserContext.Core.ValueObject;
 
 namespace UserContext.Core.Event;
 
-public sealed record ImageChanged(UserId UserId,ProfileImage Image);
+public sealed record ImageChanged(Guid UserId,ProfileImage Image);

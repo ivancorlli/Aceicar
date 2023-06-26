@@ -4,7 +4,10 @@ using UserContext.Core.ValueObject;
 
 namespace UserContext.Core.Repository;
 
-public interface IUserRepository:IRepository<User,UserId>
+public interface IUserRepository:IRepository<User>
 {
-   User? FindByEmail(Email Email); 
+   void Create(User User);
+   User? FindByEmail(Email Email);
+   User? FindByUsername(Username Username);
+   User? FindByPhone(Phone Phone); 
 }
