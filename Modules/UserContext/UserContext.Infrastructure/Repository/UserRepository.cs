@@ -9,25 +9,32 @@ namespace UserContext.Infrastructure.Repository;
 public class UserRepository : IUserRepository
 {
     private IDocumentSession _session;
+    private IQuerySession _query;
 
-    public UserRepository(IDocumentSession session)
+    public UserRepository(
+        IDocumentSession session,
+        IQuerySession query
+
+        )
     {
         _session = session;
+        _query = query;
     }
 
 
     public void Create(User User)
     {
-        _session.Events.StartStream<User>(User.Id,User.Events.ToArray());
+        _session.Events.StartStream<User>(User.Id, User.Events.ToArray());
         _session.SaveChanges();
     }
 
     public User? FindByEmail(Email Email)
     {
-        var events = _session.Query<UserCreated>().ToList();
-        var result =_session.Query<User>().Where(x=>x.Email.Value == Email.Value).ToList();
-        if(result.Count > 0) return result.First();
-            else return null;
+        var events = _session.Events.QueryRawEventDataOnly<User>().Where(x => x.Email.Value == Email.Value).ToList();
+        var created = _session.Events.QueryRawEventDataOnly<UserCreated>().Where(x => x.Email.Value == Email.Value).ToList();
+        var result = _session.Query<User>().Where(x => x.Email.Value == Email.Value).ToList();
+        if (result.Count > 0) return result.First();
+        else return null;
     }
 
     public User? FindById(Guid Id)

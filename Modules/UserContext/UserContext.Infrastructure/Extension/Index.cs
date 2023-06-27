@@ -15,29 +15,21 @@ public static class Index
 
     public static IServiceCollection InstallUserContextInfrastructure(this IServiceCollection service, IConfiguration configuration, IHostEnvironment enviroment)
     {
-        service.InstallDb(configuration,enviroment);
+        service.InstallDb(configuration, enviroment);
         service.InstallRepository();
         return service;
     }
 
-    internal static IServiceCollection InstallDb(this IServiceCollection services, IConfiguration configuration,IHostEnvironment environment)
+    internal static IServiceCollection InstallDb(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
     {
         services.AddMarten(opts =>
         {
             opts.Connection(configuration.GetConnectionString("UserContextDb")!);
-            opts.DatabaseSchemaName = "UserContext";
             opts.Events.StreamIdentity = StreamIdentity.AsGuid;
-
-            if (environment.IsDevelopment())
-            {
-                opts.AutoCreateSchemaObjects = AutoCreate.All;
-            }
-
-            // Configure data Schemas 
-            opts.ConfigureUser();
+            opts.UseDefaultSerialization(EnumStorage.AsString, nonPublicMembersStorage: NonPublicMembersStorage.All);
+            opts.AutoCreateSchemaObjects = AutoCreate.CreateOrUpdate;
         })
         .UseLightweightSessions()
-        .ApplyAllDatabaseChangesOnStartup()
         ;
         return services;
     }
