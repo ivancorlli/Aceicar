@@ -4,6 +4,6 @@ namespace Common.Basis.Repository;
 
 public interface IRepository<Aggregate> where Aggregate: IAggregate
 {
-    void Save(Aggregate Root);
-    Aggregate? FindById(Guid Id);
+    void Apply(Guid Id, params object[] @events);
+    Task<Aggregate?> FindById(Guid Id);
 }

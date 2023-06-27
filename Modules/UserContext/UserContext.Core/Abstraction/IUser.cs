@@ -1,105 +1,77 @@
-using System.Security.Cryptography.X509Certificates;
 using Common.Basis.Aggregate;
 using UserContext.Core.Enumerable;
-using UserContext.Core.Event;
+using UserContext.Core.Event.UserEvent;
 using UserContext.Core.ValueObject;
 
 namespace UserContext.Core.Abstraction;
 
 public abstract class IUser : IAggregate
 {
-    public Guid Id {get; protected set;} = default!;
-    public Email Email { get; private set; } = default!;
-    public Status Status { get; private set; }
+    public Email Email { get; protected set; } = default!;
+    public Status Status { get; protected set; }
     public Username? Username { get; private set; }
     public Phone? Phone { get; protected set; }
     public ProfileImage? Image { get; protected set; }
     public Profile? Profile { get; protected set; }
     public Location? Location { get; protected set; }
 
-    protected IUser(Email email)
-    {
-        UserCreated @event = new(UserId.Create().Value, email, Status.Active);
-        Apply(@event);
-        Raise(@event);
-    }
-
-    public IUser SuspendUser()
+    public UserSuspended SuspendUser()
     {
         UserSuspended @event = new(Id, Status.Suspended);
         Apply(@event);
-        Raise(@event);
-        return this;
+        return @event;
     }
 
-    public IUser ChangeEmail(Email email)
+    public EmailChanged ChangeEmail(Email email)
     {
-        EmailChanged @event = new(Id, email);
+        EmailChanged @event = new(Id, email.Value);
         Apply(@event);
-        Raise(@event);
-        return this;
+        return @event;
     }
 
-    internal IUser ChangePhone(Phone phone)
+    internal PhoneChanged ChangePhone(Phone phone)
     {
-        PhoneChanged @event = new(Id, phone);
+        PhoneChanged @event = new(Id, phone.PhoneCountry,phone.PhoneNumber);
         Apply(@event);
-        Raise(@event);
-        return this;
+        return @event;
     }
 
-    internal IUser ChangeUsername(Username username)
+    internal UsernameChanged ChangeUsername(Username username)
     {
-        UsernameChanged @event = new(Id, username);
+        UsernameChanged @event = new(Id, username.Value);
         Apply(@event);
-        Raise(@event);
-        return this;
+        return @event;
     }
 
-    public IUser ChangeImage(ProfileImage image)
+    public ImageChanged ChangeImage(ProfileImage image)
     {
-        ImageChanged @event = new(Id, image);
+        ImageChanged @event = new(Id, image.Value);
         Apply(@event);
-        Raise(@event);
-        return this;
-    }
-
-
-    public void Apply(UserCreated @event)
-    {
-        Id = @event.UserId;
-        Email = @event.Email;
-        Status = @event.Status;
-        UpdateVersion();
+        return @event;
     }
 
     public void Apply(EmailChanged @event)
     {
-        Email = @event.Email;
-        UpdateVersion();
+        Email = Email.Create(@event.Email);
     }
 
     public void Apply(PhoneChanged @event)
     {
-        Phone = @event.Phone;
-        UpdateVersion();
+        Phone = Phone.Create(@event.PhoneCountry,@event.PhoneNumber);
     }
 
     public void Apply(ImageChanged @event)
     {
-        Image = @event.Image;
-        UpdateVersion();
+        Image =new ProfileImage(@event.Image);
     }
 
     public void Apply(UserSuspended @event)
     {
         Status = @event.Status;
-        UpdateVersion();
     }
     public void Apply(UsernameChanged @event)
     {
-        Username = @event.Username;
-        UpdateVersion();
+        Username = Username.Create(@event.Username);
     }
 
 }

@@ -1,5 +1,6 @@
 using Marten;
 using Marten.Events;
+using Marten.Services.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,16 +27,27 @@ public static class Index
         {
             opts.Connection(configuration.GetConnectionString("UserContextDb")!);
             opts.Events.StreamIdentity = StreamIdentity.AsGuid;
-            opts.UseDefaultSerialization(EnumStorage.AsString, nonPublicMembersStorage: NonPublicMembersStorage.All);
+
+            opts.UseDefaultSerialization(
+                serializerType:SerializerType.Newtonsoft ,
+                // Optionally override the enum storage
+                enumStorage: EnumStorage.AsString,
+                // Optionally override the member casing
+                casing: Casing.CamelCase
+            );
+
             opts.AutoCreateSchemaObjects = AutoCreate.CreateOrUpdate;
+            opts.ConfigureUser();
         })
         .UseLightweightSessions()
+        .AddAsyncDaemon(Marten.Events.Daemon.Resiliency.DaemonMode.HotCold)
         ;
         return services;
     }
 
     internal static IServiceCollection InstallRepository(this IServiceCollection services)
     {
+        services.AddScoped<IUoW, UnitOfWork>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<UserManager>();
         return services;

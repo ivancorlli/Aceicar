@@ -1,6 +1,7 @@
 using Common.Basis.Utils;
 using UserContext.Core.Aggregate;
 using UserContext.Core.Error;
+using UserContext.Core.Event.UserEvent;
 using UserContext.Core.Repository;
 using UserContext.Core.ValueObject;
 
@@ -14,66 +15,47 @@ public class UserManager
         _userRepo = repo;
     }
 
-    public Result<User> CreateUser(Email email)
+    public async Task<Result<User>> CreateUser(UserCreated @event)
     {
         // search user by email
-        User? exists = _userRepo.FindByEmail(email);
+        User? exists = await _userRepo.FindByEmail(Email.Create(@event.Email));
         if (exists is null)
         {
             // create new user
-            User newUser = new User(email);
+            User newUser = User.Create(@event);
             // return user created
             return Result.Ok(newUser);
         }
         else return Result.Fail<User>(new UserExists());
-
     }
 
-    public Result<User> ChangeUsername(UserId userId, Username username)
+    public async Task<Result<UsernameChanged>> ChangeUsername(UserId userId, Username username)
     {
         // Search Username already exists 
-        User? usernameTaken = _userRepo.FindByUsername(username);
-        if (usernameTaken != null) return Result.Fail<User>(new UserExists());
+        User? usernameTaken = await _userRepo.FindByUsername(username);
+        if (usernameTaken != null) return Result.Fail<UsernameChanged>(new UserExists());
         // Search user by id
-        User? user = _userRepo.FindById(userId.Value);
+        User? user = await _userRepo.FindById(userId.Value);
         if (user != null)
         {
-            user.ChangeUsername(username);
-            return Result.Ok(user);
+            UsernameChanged result = user.ChangeUsername(username);
+            return Result.Ok(result);
         }
-        else return Result.Fail<User>(new UserNotFound());
+        else return Result.Fail<UsernameChanged>(new UserNotFound());
     }
 
-    public Result<User> ChangePhone(UserId userId, Phone phone)
+    public async Task<Result<PhoneChanged>> ChangePhone(UserId userId, Phone phone)
     {
         // Search Phone already exists 
-        User? usernameTaken = _userRepo.FindByPhone(phone);
-        if (usernameTaken != null) return Result.Fail<User>(new UserExists());
+        User? usernameTaken = await _userRepo.FindByPhone(phone);
+        if (usernameTaken != null) return Result.Fail<PhoneChanged>(new UserExists());
         // Search user by id
-        User? user = _userRepo.FindById(userId.Value);
+        User? user = await _userRepo.FindById(userId.Value);
         if (user != null)
         {
-            user.ChangePhone(phone);
-            return Result.Ok(user);
+            PhoneChanged result = user.ChangePhone(phone);
+            return Result.Ok(result);
         }
-        else return Result.Fail<User>(new UserNotFound());
-    }
-
-    public Result<User> ConfigAccount(UserId userId,Username username, Phone phone)
-    {
-        // Search Phone already exists 
-        User? usernameTaken = _userRepo.FindByPhone(phone);
-        if (usernameTaken != null) return Result.Fail<User>(new UserExists());
-        // Search Username already exists 
-        usernameTaken = _userRepo.FindByUsername(username);
-        if (usernameTaken != null) return Result.Fail<User>(new UserExists());
-        // Search user by id
-        User? user = _userRepo.FindById(userId.Value);
-        if (user != null)
-        {
-            user.ChangePhone(phone).ChangeUsername(username);
-            return Result.Ok(user);
-        }
-        else return Result.Fail<User>(new UserNotFound());
+        else return Result.Fail<PhoneChanged>(new UserNotFound());
     }
 }

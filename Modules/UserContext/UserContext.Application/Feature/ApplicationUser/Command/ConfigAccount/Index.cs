@@ -1,6 +1,7 @@
 using Common.Basis.Interface;
 using Common.Basis.Utils;
 using UserContext.Core.Aggregate;
+using UserContext.Core.Event.UserEvent;
 using UserContext.Core.Repository;
 using UserContext.Core.Service;
 using UserContext.Core.ValueObject;
@@ -16,17 +17,19 @@ public record ConfigAccountCommand(
 
 public class ConfigAccountHandler
 {
-    public OperationResult<User> Handle(ConfigAccountCommand command,IUserRepository _repo, UserManager _manager)
+    public async Task<OperationResult> Handle(ConfigAccountCommand command, IUoW _session, UserManager _manager, CancellationToken cancellationToken)
     {
         UserId UserId = new(command.UserId);
         Username Username = Username.Create(command.Username);
-        Phone Phone = Phone.Create(command.PhoneCountry,command.PhoneNumber);
-        Result<User> result = _manager.ConfigAccount(UserId,Username,Phone); 
-        if(result.IsSuccess) 
-        {
-            User user = result.Value;
-            _repo.Save(user);
-            return new SuccessResult<User>(user);
-        }else return new InvalidResult<User>(result.Error.Message);
+        Phone Phone = Phone.Create(command.PhoneCountry, command.PhoneNumber);
+        Result<UsernameChanged> username = await _manager.ChangeUsername(UserId,Username);
+        if (username.IsFailure) return new InvalidResult(username.Error.Message);
+        Result<PhoneChanged> phone = await _manager.ChangePhone(UserId,Phone);
+        if(phone.IsFailure) return new InvalidResult(phone.Error.Message);
+        PhoneChanged phoneChanged = phone.Value;
+        UsernameChanged usernameChanged = username.Value;
+        _session.UserRepository.Apply(UserId.Value,phoneChanged,usernameChanged);
+        await _session.SaveChangesAsync(cancellationToken);
+        return new SuccessResult();
     }
 }

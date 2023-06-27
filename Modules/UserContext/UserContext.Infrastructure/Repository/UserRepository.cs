@@ -1,6 +1,6 @@
 using Marten;
 using UserContext.Core.Aggregate;
-using UserContext.Core.Event;
+using UserContext.Core.Event.UserEvent;
 using UserContext.Core.Repository;
 using UserContext.Core.ValueObject;
 
@@ -21,39 +21,48 @@ public class UserRepository : IUserRepository
         _query = query;
     }
 
-
-    public void Create(User User)
+    public void Apply(Guid Id, params object[] @events)
     {
-        _session.Events.StartStream<User>(User.Id, User.Events.ToArray());
-        _session.SaveChanges();
+        if (events.ToList().Count > 0)
+        {
+            foreach (var item in events.ToList())
+            {
+                _session.Events.Append(Id, item);
+            }
+
+        }
     }
 
-    public User? FindByEmail(Email Email)
+    public void Create(Guid UserId, UserCreated @event)
     {
-        var events = _session.Events.QueryRawEventDataOnly<User>().Where(x => x.Email.Value == Email.Value).ToList();
-        var created = _session.Events.QueryRawEventDataOnly<UserCreated>().Where(x => x.Email.Value == Email.Value).ToList();
-        var result = _session.Query<User>().Where(x => x.Email.Value == Email.Value).ToList();
+        _session.Events.StartStream<User>(UserId, @event);
+    }
+
+    public async Task<User?> FindByEmail(Email Email)
+    {
+        var result = await _query.Query<User>().Where(x => x.Email.Value == Email.Value).ToListAsync();
         if (result.Count > 0) return result.First();
         else return null;
     }
 
-    public User? FindById(Guid Id)
+    public async Task<User?> FindById(Guid Id)
     {
-        throw new NotImplementedException();
+        var result = await _query.Events.AggregateStreamAsync<User>(Id);
+        if (result != null) return result;
+        else return null;
     }
 
-    public User? FindByPhone(Phone Phone)
+    public async Task<User?> FindByPhone(Phone Phone)
     {
-        throw new NotImplementedException();
+        var result = await _query.Query<User>().Where(x => x.Phone != null && x.Phone.PhoneNumber == Phone.PhoneNumber).ToListAsync();
+        if (result.Count > 0) return result.First();
+        else return null;
     }
 
-    public User? FindByUsername(Username Username)
+    public async Task<User?> FindByUsername(Username Username)
     {
-        throw new NotImplementedException();
-    }
-
-    public void Save(User Root)
-    {
-        throw new NotImplementedException();
+        var result = await _query.Query<User>().Where(x => x.Username != null && x.Username.Value == Username.Value).ToListAsync();
+        if (result.Count > 0) return result.First();
+        else return null;
     }
 }
