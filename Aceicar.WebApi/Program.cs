@@ -30,8 +30,8 @@ app.MapGet("/init", async (IMessageBus _bus) =>
 
     // OperationResult<User> result = await _bus.InvokeAsync<OperationResult<User>>(new CreateUserCommand("corlliivan@gmail.com"));
     OperationResult<User> result = await _bus.InvokeAsync<OperationResult<User>>(
-    new ConfigAccountCommand("2f14e353-008b-4925-936f-e83b66abe852", "corlliivan", "AR", "3876410036")
-      );
+    new ConfigAccountCommand("81e03d5f-e7f4-4e84-a117-1f6b986cb340", "ivancorlli", "AR", "3876436816")
+    );
 
 });
 

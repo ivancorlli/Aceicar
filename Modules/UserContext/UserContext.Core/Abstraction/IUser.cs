@@ -15,39 +15,44 @@ public abstract class IUser : IAggregate
     public Profile? Profile { get; protected set; }
     public Location? Location { get; protected set; }
 
-    public UserSuspended SuspendUser()
+    public IUser SuspendUser()
     {
         UserSuspended @event = new(Id, Status.Suspended);
+        Raise(@event);
         Apply(@event);
-        return @event;
+        return this;
     }
 
-    public EmailChanged ChangeEmail(Email email)
+    public IUser ChangeEmail(Email email)
     {
         EmailChanged @event = new(Id, email.Value);
+        Raise(@event);
         Apply(@event);
-        return @event;
+        return this;
     }
 
-    internal PhoneChanged ChangePhone(Phone phone)
+    internal IUser ChangePhone(Phone phone)
     {
         PhoneChanged @event = new(Id, phone.PhoneCountry,phone.PhoneNumber);
+        Raise(@event);
         Apply(@event);
-        return @event;
+        return this;
     }
 
-    internal UsernameChanged ChangeUsername(Username username)
+    internal IUser ChangeUsername(Username username)
     {
         UsernameChanged @event = new(Id, username.Value);
+        Raise(@event);
         Apply(@event);
-        return @event;
+        return this;
     }
 
-    public ImageChanged ChangeImage(ProfileImage image)
+    public IUser ChangeImage(ProfileImage image)
     {
         ImageChanged @event = new(Id, image.Value);
+        Raise(@event);
         Apply(@event);
-        return @event;
+        return this;
     }
 
     public void Apply(EmailChanged @event)

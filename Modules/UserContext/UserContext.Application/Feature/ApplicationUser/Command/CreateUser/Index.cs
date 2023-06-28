@@ -8,26 +8,26 @@ using UserContext.Core.ValueObject;
 
 namespace UserContext.Application.Feature.ApplicationUser.Command.CreateUser;
 
-public record CreateUserCommand(string Email);
+public sealed record CreateUserCommand(string Email);
 
 
-public class CreateUserHandler
+public sealed class CreateUserHandler
 {
 
 
-    public async Task<OperationResult<User>> Handle(CreateUserCommand command, IUoW _session, UserManager _manager,CancellationToken cancellationToken)
+    public static async Task<OperationResult> Handle(CreateUserCommand command, IUoW _session, UserManager _manager,CancellationToken cancellationToken)
     {
         Email Email = Email.Create(command.Email);
-        UserCreated @event = new(Guid.NewGuid(), Email.Value);
+        UserCreated @event = new(UserId.Create().Value, Email.Value);
         Result<User> newUser = await _manager.CreateUser(@event);
         if (newUser.IsSuccess)
         {
             User user = newUser.Value;
             _session.UserRepository.Create(user.Id,@event);
             await _session.SaveChangesAsync(cancellationToken);
-            return new SuccessResult<User>(user);
+            return new SuccessResult();
         }
-        else return new InvalidResult<User>(newUser.Error.Message);
+        else return new InvalidResult(newUser.Error.Message);
 
     }
 

@@ -21,8 +21,10 @@ public class UserRepository : IUserRepository
         _query = query;
     }
 
-    public void Apply(Guid Id, params object[] @events)
+    public void Apply(User Root)
     {
+        Guid Id = Root.Id;
+        IEnumerable<object> events = Root.Events;
         if (events.ToList().Count > 0)
         {
             foreach (var item in events.ToList())
@@ -31,6 +33,7 @@ public class UserRepository : IUserRepository
             }
 
         }
+        Root.Clear();
     }
 
     public void Create(Guid UserId, UserCreated @event)
