@@ -2,7 +2,6 @@ using Oakton.Resources;
 using Wolverine;
 using Wolverine.EntityFrameworkCore;
 using Wolverine.Postgresql;
-using UserContext.Infrastructure.Extension;
 
 
 namespace Aceicar.WebApi.Extension;
@@ -40,7 +39,7 @@ public static class WolverineExtension
             o.Discovery.IncludeAssembly(typeof(NotificationSystem.Application.Command.UserCreatedEvent.UserCreatedHandler).Assembly);
 
             // - UserContext/Application
-            o.Discovery.IncludeAssembly(typeof(UserContext.Application.Feature.ApplicationUser.Command.CreateUser.CreateUserCommand).Assembly);
+            o.Discovery.IncludeAssembly(typeof(UserContext.Application.Feature.ApplicationUser.Command.CreateUser.CreateUserHandler).Assembly);
         });
 
         // This is rebuilding the persistent storage database schema on startup
