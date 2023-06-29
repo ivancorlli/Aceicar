@@ -11,7 +11,7 @@ public sealed record ChangeEmailCommand(string UserId,string Email);
 
 public sealed class ChangeEmailHandler
 {
-    public static async Task<OperationResult> Handle(
+    public static async Task<IOperationResult> Handle(
         ChangeEmailCommand command,
         IUoW _session,
         UserManager _manager,
@@ -21,9 +21,9 @@ public sealed class ChangeEmailHandler
         UserId UserId = new(command.UserId);
         Email Email = Email.Create(command.Email);
         Result<User> result = await _manager.ChangeEmail(UserId,Email);
-        if(result.IsFailure) return new InvalidResult(result.Error.Message);
+        if(result.IsFailure) return OperationResult.Invalid(result.Error.Message);
         _session.UserRepository.Apply(result.Value);
         await _session.SaveChangesAsync(cancellationToken);
-        return new SuccessResult();
+        return OperationResult.Success();
     }  
 }

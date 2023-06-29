@@ -6,4 +6,5 @@ public interface IRepository<Aggregate> where Aggregate: IAggregate
 {
     void Apply(Aggregate Root);
     Task<Aggregate?> FindById(Guid Id);
+    Task<IEnumerable<Aggregate>> FindAll();
 }

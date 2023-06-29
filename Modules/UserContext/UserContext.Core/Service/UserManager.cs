@@ -1,5 +1,6 @@
 using Common.Basis.Utils;
 using UserContext.Core.Aggregate;
+using UserContext.Core.Enumerable;
 using UserContext.Core.Error;
 using UserContext.Core.Event.UserEvent;
 using UserContext.Core.Repository;

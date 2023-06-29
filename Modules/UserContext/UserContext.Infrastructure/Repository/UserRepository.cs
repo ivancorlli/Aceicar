@@ -3,6 +3,7 @@ using UserContext.Core.Aggregate;
 using UserContext.Core.Event.UserEvent;
 using UserContext.Core.Repository;
 using UserContext.Core.ValueObject;
+using UserContext.Infrastructure.Data;
 
 namespace UserContext.Infrastructure.Repository;
 
@@ -39,6 +40,13 @@ public class UserRepository : IUserRepository
     public void Create(Guid UserId, UserCreated @event)
     {
         _session.Events.StartStream<User>(UserId, @event);
+    }
+
+    public async Task<IEnumerable<User>> FindAll()
+    {
+        var res = await _session.Query<UserProjection>().ToListAsync();
+        var result = await _session.Query<User>().ToListAsync();
+        return result;
     }
 
     public async Task<User?> FindByEmail(Email Email)

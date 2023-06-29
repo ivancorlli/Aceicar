@@ -12,7 +12,7 @@ public sealed record ChangeUsernameCommand(string UserId, string Username);
 
 public sealed class Index
 {
-    public static async Task<OperationResult> Handle(
+    public static async Task<IOperationResult> Handle(
         ChangeUsernameCommand command,
         IUoW _session,
         UserManager _manager,
@@ -22,10 +22,10 @@ public sealed class Index
         UserId UserId = new(command.UserId);
         Username Username = Username.Create(command.Username);
         Result<User> result = await _manager.ChangeUsername(UserId,Username);
-        if(result.IsFailure) return new InvalidResult(result.Error.Message);
+        if(result.IsFailure) return OperationResult.Invalid(result.Error.Message);
         _session.UserRepository.Apply(result.Value);
         await _session.SaveChangesAsync(cancellationToken);
-        return new SuccessResult();
+        return OperationResult.Success();
     }
 
 }

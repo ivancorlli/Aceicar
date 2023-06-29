@@ -40,7 +40,9 @@ public static class Index
             opts.ConfigureUser();
         })
         .UseLightweightSessions()
+        .ApplyAllDatabaseChangesOnStartup()
         .AddAsyncDaemon(Marten.Events.Daemon.Resiliency.DaemonMode.HotCold)
+
         ;
         return services;
     }

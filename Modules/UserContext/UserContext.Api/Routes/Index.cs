@@ -1,3 +1,5 @@
+using UserContext.Api.Controller;
+
 namespace UserContext.Api.Routes;
 
 public static class Index
@@ -5,19 +7,20 @@ public static class Index
 
     public static IEndpointRouteBuilder UserContextEndpoints(this IEndpointRouteBuilder route)
     {
-        route.MapGroup("/user").Endpoints();
+        route.MapGroup("/user")
+        .MapPosts()
+        .MapGets();
         return route;
     }
 
-    internal static IEndpointRouteBuilder Endpoints(this IEndpointRouteBuilder endpoint)
+    internal static IEndpointRouteBuilder MapPosts(this IEndpointRouteBuilder endpoint)
     {
-        endpoint.MapPost("/new",NewUser);
+        endpoint.MapPost("/new", CreateUser.Execute);
         return endpoint;
     }
-
-    internal static IResult NewUser()
+    internal static IEndpointRouteBuilder MapGets(this IEndpointRouteBuilder endpoint)
     {
-        return Results.Ok("Enpoints Works");
+        endpoint.MapGet("/all",Allusers.Execute);
+        return endpoint;
     }
-
 }

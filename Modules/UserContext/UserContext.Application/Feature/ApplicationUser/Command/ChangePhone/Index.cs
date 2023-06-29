@@ -11,7 +11,7 @@ public sealed record ChangePhoneCommand(string UserId,string PhoneCountry,string
 
 public sealed class ChangePhoneHandler
 {
-    public static async Task<OperationResult> Handle(
+    public static async Task<IOperationResult> Handle(
         ChangePhoneCommand command,
         IUoW _session,
         UserManager _manager,
@@ -21,9 +21,9 @@ public sealed class ChangePhoneHandler
         UserId UserId = new(command.UserId);
         Phone Phone = Phone.Create(command.PhoneCountry,command.PhoneNumber);
         Result<User> result = await _manager.ChangePhone(UserId,Phone);
-        if(result.IsFailure) return new InvalidResult(result.Error.Message);
+        if(result.IsFailure) return OperationResult.Invalid(result.Error.Message);
         _session.UserRepository.Apply(result.Value);
         await _session.SaveChangesAsync(cancellationToken);
-        return new SuccessResult();
+        return OperationResult.Success();
     }
 }

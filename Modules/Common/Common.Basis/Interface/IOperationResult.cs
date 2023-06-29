@@ -1,15 +1,15 @@
 using Common.Basis.Enum;
 
 namespace Common.Basis.Interface;
-public abstract class OperationResult
+public abstract class IOperationResult
 {
-    public abstract OperationResultType ResultType { get; }
-    public abstract List<string> Errors { get; }
+    public abstract OperationResultType ResultType { get; protected set;}
+    public abstract List<string> Errors { get; protected set;}
 }
 
-public abstract class OperationResult<T>
+public abstract class IOperationResult<T>
 {
-    public abstract OperationResultType ResultType { get; }
-    public abstract List<string> Errors { get; }
-    public abstract T Data { get; }
+    public abstract OperationResultType ResultType { get; protected set;}
+    public abstract List<string> Errors { get; protected set;}
+    public abstract T Data { get; protected set;}
 }

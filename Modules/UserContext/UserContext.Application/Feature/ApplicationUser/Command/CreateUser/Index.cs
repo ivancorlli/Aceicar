@@ -15,19 +15,20 @@ public sealed class CreateUserHandler
 {
 
 
-    public static async Task<OperationResult> Handle(CreateUserCommand command, IUoW _session, UserManager _manager,CancellationToken cancellationToken)
+    public static async Task<IOperationResult> Handle(CreateUserCommand command, IUoW _session, UserManager _manager,CancellationToken cancellationToken)
     {
         Email Email = Email.Create(command.Email);
-        UserCreated @event = new(UserId.Create().Value, Email.Value);
+        UserId UserId = UserId.Create();
+        UserCreated @event = new(UserId.Value, Email.Value);
         Result<User> newUser = await _manager.CreateUser(@event);
         if (newUser.IsSuccess)
         {
             User user = newUser.Value;
             _session.UserRepository.Create(user.Id,@event);
             await _session.SaveChangesAsync(cancellationToken);
-            return new SuccessResult();
+            return OperationResult.Success();
         }
-        else return new InvalidResult(newUser.Error.Message);
+        else return OperationResult.Invalid(newUser.Error.Message);
 
     }
 

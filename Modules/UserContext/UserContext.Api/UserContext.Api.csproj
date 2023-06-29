@@ -4,6 +4,10 @@
     <ProjectReference Include="..\UserContext.Application\UserContext.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="WolverineFx" Version="1.1.1" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>

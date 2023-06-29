@@ -16,15 +16,15 @@ public sealed record ConfigAccountCommand(
 
 public sealed class ConfigAccountHandler
 {
-    public static async Task<OperationResult> Handle(ConfigAccountCommand command, IUoW _session, UserManager _manager, CancellationToken cancellationToken)
+    public static async Task<IOperationResult> Handle(ConfigAccountCommand command, IUoW _session, UserManager _manager, CancellationToken cancellationToken)
     {
         UserId UserId = new(command.UserId);
         Username Username = Username.Create(command.Username);
         Phone Phone = Phone.Create(command.PhoneCountry, command.PhoneNumber);
         Result<User> result = await _manager.ConfigAccount(UserId,Username,Phone);
-        if (result.IsFailure) return new InvalidResult(result.Error.Message);
+        if (result.IsFailure) return OperationResult.Invalid(result.Error.Message);
         _session.UserRepository.Apply(result.Value);
         await _session.SaveChangesAsync(cancellationToken);
-        return new SuccessResult();
+        return OperationResult.Success();
     }
 }
