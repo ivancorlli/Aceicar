@@ -8,7 +8,7 @@ namespace UserContext.Core.Repository;
 public interface IUserRepository:IRepository<User>
 {
    void Create(Guid UserId, UserCreated @event);
-   Task<User?> FindByEmail(Email Email);
-   Task<User?> FindByUsername(Username Username);
-   Task<User?> FindByPhone(Phone Phone); 
+   Task<bool> IsEmailUsed(Email Email);
+   Task<bool> IsUsernameUsed(Username Username);
+   Task<bool> IsPhoneUsed(Phone Phone); 
 }

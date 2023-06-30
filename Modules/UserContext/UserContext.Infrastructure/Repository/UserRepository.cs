@@ -1,9 +1,9 @@
 using Marten;
+using UserContext.Application.ViewModel;
 using UserContext.Core.Aggregate;
 using UserContext.Core.Event.UserEvent;
 using UserContext.Core.Repository;
 using UserContext.Core.ValueObject;
-using UserContext.Infrastructure.Data;
 
 namespace UserContext.Infrastructure.Repository;
 
@@ -42,38 +42,35 @@ public class UserRepository : IUserRepository
         _session.Events.StartStream<User>(UserId, @event);
     }
 
-    public async Task<IEnumerable<User>> FindAll()
-    {
-        var res = await _session.Query<UserProjection>().ToListAsync();
-        var result = await _session.Query<User>().ToListAsync();
-        return result;
-    }
-
-    public async Task<User?> FindByEmail(Email Email)
-    {
-        var result = await _query.Query<User>().Where(x => x.Email.Value == Email.Value).ToListAsync();
-        if (result.Count > 0) return result.First();
-        else return null;
-    }
-
     public async Task<User?> FindById(Guid Id)
     {
-        var result = await _query.Events.AggregateStreamAsync<User>(Id);
-        if (result != null) return result;
+        var result = await _session.Events.FetchForWriting<User>(Id);
+        if (result != null) return result.Aggregate;
         else return null;
     }
 
-    public async Task<User?> FindByPhone(Phone Phone)
+    public async Task<bool> IsEmailUsed(Email Email)
     {
-        var result = await _query.Query<User>().Where(x => x.Phone != null && x.Phone.PhoneNumber == Phone.PhoneNumber).ToListAsync();
-        if (result.Count > 0) return result.First();
-        else return null;
+        IEnumerable<UserAccount> result = await _query.Query<UserAccount>().Where(x => x.Email.ToLower() == Email.Value.ToLower()).ToListAsync();
+        if (result.Count() > 0) return true;
+        else return false;
     }
 
-    public async Task<User?> FindByUsername(Username Username)
+    public async Task<bool> IsPhoneUsed(Phone Phone)
     {
-        var result = await _query.Query<User>().Where(x => x.Username != null && x.Username.Value == Username.Value).ToListAsync();
-        if (result.Count > 0) return result.First();
-        else return null;
+        IEnumerable<UserAccount> result = await _query.Query<UserAccount>().Where(
+            x => x.Phone != null &&
+            x.Phone.PhoneCountry.ToUpper() == Phone.PhoneCountry.ToUpper() &&
+            x.Phone.PhoneNumber == Phone.PhoneNumber
+            ).ToListAsync();
+        if (result.Count() > 0) return true;
+        else return false;
+    }
+
+    public async Task<bool> IsUsernameUsed(Username Username)
+    {
+        IEnumerable<UserAccount> result = await _query.Query<UserAccount>().Where(x => x.Username != null && x.Username.ToLower() == Username.Value.ToLower()).ToListAsync();
+        if (result.Count() > 0) return true;
+        else return false;
     }
 }

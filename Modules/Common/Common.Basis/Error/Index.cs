@@ -21,4 +21,8 @@ public record ErrorTypes
 {
     public const string NullValue = "NullValue";
     public const string Empty = "";
+    public static string TypeBuilder(string context ,string local)
+    {
+        return $"{context}.{local}";
+    }
 }

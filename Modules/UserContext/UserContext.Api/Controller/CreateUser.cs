@@ -21,6 +21,7 @@ public static class CreateUser
         CreateUserCommand @command = new(NewEmail.Email);
         IOperationResult result = await Bus.InvokeAsync<IOperationResult>(command);
         if(result.ResultType == OperationResultType.Ok) return TypedResults.Ok(new {Message="User created succesfully"});
+        if(result.ResultType == OperationResultType.Invalid) return TypedResults.BadRequest(new {Message = result.Errors.First()});
         return Results.NoContent();
     }
 }

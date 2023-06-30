@@ -8,13 +8,13 @@ public sealed record AllUsersCommand();
 public sealed class AllUsersHandler
 {
 
-    public static async Task<IEnumerable<User>> Handle(
+    public static void Handle(
         AllUsersCommand command,
         IUoW _session
     ) 
     {
-        IEnumerable<User> allUsers = await _session.UserRepository.FindAll();
-        return allUsers;
+        //IEnumerable<User> allUsers = await _session.UserRepository.FindAll();
+        //return allUsers;
     }
 
 }

@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.Basis\Common.Basis.csproj" />
     <ProjectReference Include="..\UserContext.Core\UserContext.Core.csproj" />
+    <ProjectReference Include="..\UserContext.Application\UserContext.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -10,12 +10,13 @@ public sealed class OperationResult : IOperationResult
     private OperationResult(){}
     public static OperationResult Success()
     {
-        return new OperationResult();
+        return new OperationResult() {ResultType = OperationResultType.Ok, Errors =new()};
     }
 
     public static OperationResult Invalid(string error)
     {
         OperationResult result = new();
+        result.ResultType = OperationResultType.Invalid;
         result.Errors = new() {error ?? "The input was invalid."};
         return result;
     }
