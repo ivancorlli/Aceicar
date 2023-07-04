@@ -55,6 +55,22 @@ public abstract class IUser : IAggregate
         return this;
     }
 
+    public IUser ModifyProfile(Profile profile)
+    {
+        ProfileModified @event = new(Id,profile.Name,profile.Surname,profile.Gender,profile.Birth);
+        Raise(@event);
+        Apply(@event);
+        return this;
+    }
+
+    public IUser ModifyLocation(Location location)
+    {
+        LocationModified @event = new(Id,location.Country,location.City,location.State,location.PostalCode,location.Status);
+        Raise(@event);
+        Apply(@event);
+        return this;
+    }
+
     public void Apply(EmailChanged @event)
     {
         Email = Email.Create(@event.Email);
@@ -79,4 +95,13 @@ public abstract class IUser : IAggregate
         Username = Username.Create(@event.Username);
     }
 
+    public void Apply(ProfileModified @event)
+    {
+        Profile = Profile.Create(@event.Name,@event.Surname,@event.Gender,@event.Birth);
+    }
+
+    public void Apply(LocationModified @event)
+    {
+        Location = Location.Create(@event.Country,@event.City,@event.State,@event.PostalCode,@event.Status);
+    }
 }

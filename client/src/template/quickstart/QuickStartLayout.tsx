@@ -2,6 +2,7 @@
 import { Box, Container ,Step, StepDescription, StepIcon, StepIndicator, StepNumber, StepSeparator, StepStatus, StepTitle, Stepper, VStack, useSteps } from '@chakra-ui/react'
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import React, { createContext } from 'react'
+import { WithAuth } from '@/auth/WithAuth';
 
 
 const steps = [
@@ -20,7 +21,6 @@ const QuickStartLayout = ({ children }: { children: React.ReactNode }) => {
   })
 
   function Advance(position:number) {
-    console.log("pos",position)
     if(position === 0 || position <= steps.length){
       setActiveStep(position)
     }
@@ -28,8 +28,9 @@ const QuickStartLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
     <QuickStartContext.Provider value={(num)=>Advance(num)}>
-      <VStack h="100%" alignItems="center" spacing={2} py="2rem">
-        <VStack w="100%" alignItems="center" justifyContent="center" alignSelf="start">
+      <VStack h="100%" maxW="100%" alignItems="center" spacing={2} py="2rem">
+        <VStack w="100%" maxW="100%" alignItems="center" justifyContent="center" alignSelf="start">
+          <GuideMobile index={activeStep}/>
           <Guide index={activeStep} />
         </VStack >
         <Container py="3rem" w="100%" maxW="100%">
@@ -47,7 +48,7 @@ function Guide({ index }: { index: number }) {
 
 
   return (
-    <Stepper size="lg" w="75%" index={index} colorScheme="blackAlpha">
+    <Stepper size="lg" w="75%" index={index} colorScheme="blackAlpha" display={["none","none","flex","flex"]}>
       {steps.map((step, index) => (
         <Step key={index}>
           <StepIndicator>
@@ -71,9 +72,28 @@ function Guide({ index }: { index: number }) {
 
 }
 
+function GuideMobile({index}:{index:number}) {
+  return (
+    <Stepper size="md" w="95%" index={index} colorScheme="blackAlpha" display={["flex","flex","none"]}>
+      {steps.map((step, index) => (
+        <Step key={index}>
+          <StepIndicator>
+            <StepStatus
+              complete={<StepIcon />}
+              incomplete={<StepNumber />}
+              active={<StepNumber />}
+            />
+          </StepIndicator>
+          <StepSeparator />
+        </Step>
+      ))}
+    </Stepper>
+  )
+}
+
 
 
 
 
 export {QuickStartContext}
-export default withPageAuthRequired(QuickStartLayout)
+export default WithAuth(QuickStartLayout)

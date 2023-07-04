@@ -6,19 +6,20 @@ import { MdSupport } from 'react-icons/md'
 import { IoCarSport, IoCarSportOutline, IoSettingsSharp, IoSpeedometerOutline, IoSpeedometerSharp } from 'react-icons/io5';
 import { BiSolidHome } from 'react-icons/bi'
 import { Container, Divider, VStack, useColorMode } from '@chakra-ui/react'
-import { useUser } from '@auth0/nextjs-auth0/client';
 import React from 'react'
 import SidebarButton from './Button/SidebarButton';
 import ProfileButton from './Button/ProfileButton';
 import { usePathname } from 'next/navigation';
+import useUser from '@/hook/useUser';
 
 const SidebarLarge = () => {
   const { colorMode } = useColorMode();
-  const { user: session, isLoading } = useUser();
+  const { user, isLoading } = useUser();
   const path = usePathname();
 
   return (
     <VStack
+      display={["none", "none", "none", "flex"]}
       w='100%'
       h='100%'
       maxW='250px'
@@ -39,7 +40,7 @@ const SidebarLarge = () => {
                 <SidebarButton icon={path === "/" ? BiSolidHome : SlHome} text='Inicio' link='/' />
                 {
 
-                  session != null
+                  user != null
                     ?
                     <>
                       <SidebarButton icon={path === "/mycars" ? IoCarSport : IoCarSportOutline} text='Vehiculos' link='/mycars' />
@@ -69,9 +70,9 @@ const SidebarLarge = () => {
                 <>
                   <Divider />
                   {
-                    session != null
+                    user != null
                       ? <>
-                        <ProfileButton text={session.name ?? ""} src={session.picture ?? ""} link={`/user/${session.org_id}`} />
+                        <ProfileButton text={user.Profile?.Name ?? undefined} src={user.ProfileImage ? user.ProfileImage : user.Email} link={`/user/${user.UserId}`} />
                         <SidebarButton icon={SlLogout} text='Cerrar Sesion' link='/api/auth/logout' />
                       </>
                       :

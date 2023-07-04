@@ -1,7 +1,7 @@
 'use client'
 
 import UserAccount from "@/component/Card/UserAccount";
-import { Button, Input, InputGroup, InputLeftAddon, VStack } from "@chakra-ui/react";
+import { Button, Container, Input, InputGroup, InputLeftAddon, VStack } from "@chakra-ui/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useContext, useEffect, useLayoutEffect, useState } from "react";
 import { QuickStartContext } from "./QuickStartLayout";
@@ -86,19 +86,21 @@ function SetpOne() {
         <>
             <VStack w="100%" >
                 <UserAccount form={form} />
-                <form onSubmit={(e) => handleSubmit(e)} style={{ width: "35%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "2rem" }}>
-                    <VStack w="100%">
-                        <Input name='username' defaultValue={form.username} onChange={(e) => handleChange(e)} variant='filled' type="text" autoCapitalize="true" autoComplete="text" placeholder='Nombre de usuario' borderColor="brand.100" bg="white" _focus={{ borderColor: "brand.100" }} />
-                        <InputGroup>
-                            <InputLeftAddon children='+54' bg="brand.100" color="white" borderColor="brand.100" />
-                            <Input name='phoneNumber' defaultValue={form.phoneNumber} onChange={(e) => handleChange(e)} variant='filled' type="tel" autoComplete="tel" placeholder='Telefono' borderColor="#brand.100" _focus={{ borderColor: "brand.100" }} bg="white" />
-                        </InputGroup>
-                    </VStack>
-                    <Button type="submit" bg="brand.100" color="white" variant='solid' w="50%" _hover={{ bg: "black" }}>
-                        Continuar
-                    </Button>
-                </form>
-                
+                <Container w={["100%","80%","50%"]}>
+                    <form onSubmit={(e) => handleSubmit(e)} style={{ width: "100%%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "2rem" }}>
+                        <VStack w="100%">
+                            <Input name='username' defaultValue={form.username} onChange={(e) => handleChange(e)} variant='filled' type="text" autoCapitalize="true" autoComplete="text" placeholder='Nombre de usuario' borderColor="brand.100" bg="white" _focus={{ borderColor: "brand.100" }} />
+                            <InputGroup>
+                                <InputLeftAddon children='+54' bg="brand.100" color="white" borderColor="brand.100" />
+                                <Input name='phoneNumber' defaultValue={form.phoneNumber} onChange={(e) => handleChange(e)} variant='filled' type="tel" autoComplete="tel" placeholder='Telefono' borderColor="#brand.100" _focus={{ borderColor: "brand.100" }} bg="white" />
+                            </InputGroup>
+                        </VStack>
+                        <Button type="submit" bg="brand.100" color="white" variant='solid' w="50%" _hover={{ bg: "black" }}>
+                            Continuar
+                        </Button>
+                    </form>
+                </Container>
+
             </VStack>
         </>
     )

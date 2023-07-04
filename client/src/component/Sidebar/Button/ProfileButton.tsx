@@ -1,11 +1,11 @@
-import { Avatar, HStack, Icon, Text } from '@chakra-ui/react'
+import { Avatar, HStack, Text } from '@chakra-ui/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
 type Props = {
     src?: string,
-    text: string,
+    text?: string,
     link: string
 }
 
@@ -19,13 +19,13 @@ const ProfileButton = (props: Props) => {
                 color={params == props.link ? "white" : "brand.100"}
                 borderRadius={params == props.link ? "md" : "none"}
                 padding="10px" >
-                <Avatar name={props.src ? "" : props.text} src={props.src ?? ""} size="sm" />
+                <Avatar name={props.text == undefined ? props.src : ""} src={props.src ?? ""} size="sm" />
                 <Text
                     fontWeight={"light"}
                     lineHeight="1"
                     letterSpacing="0"
                 >
-                    {props.text}
+                    {props.text ?? "Ver perfil"}
                 </Text>
             </HStack>
         </Link>

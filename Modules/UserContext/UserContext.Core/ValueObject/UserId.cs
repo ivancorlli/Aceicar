@@ -14,6 +14,10 @@ public record UserId
     {
         Value = Guid.Parse(userId);
     }
+        public UserId(Guid userId)
+    {
+        Value = userId;
+    }
     public static UserId Create()
     {
         UserId newUserId= new();

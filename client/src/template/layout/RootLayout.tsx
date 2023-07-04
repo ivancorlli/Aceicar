@@ -1,12 +1,14 @@
 'use client'
 import { Outfit } from 'next/font/google'
- 
+
 // If loading a variable font, you don't need to specify the font weight
 const font = Outfit({ subsets: ['latin'] })
 
 import SidebarLarge from "@/component/Sidebar/SidebarLarge"
-import { Container, Grid, GridItem, Hide, Show } from "@chakra-ui/react"
+import { Container, Grid, GridItem } from "@chakra-ui/react"
 import React from "react"
+import MobileNavbar from '@/component/Navbar/MobileNavbar'
+import SidebarShort from '@/component/Sidebar/SidebarShort'
 
 
 
@@ -21,7 +23,9 @@ function RootLayout({ children }: { children: React.ReactNode }) {
                     gap='0'
                 >
                     <SideBars>
-                        <SidebarLarge/>
+                        <MobileNavbar />
+                        <SidebarShort />
+                        <SidebarLarge />
                     </SideBars>
                     <Content >
                         {children}
@@ -35,7 +39,7 @@ function RootLayout({ children }: { children: React.ReactNode }) {
 function Content({ children }: { children: React.ReactNode }) {
     return (
         <>
-            <GridItem w="100%" h='100%' px={["10xpx"]} className="content" bg="brand.200">
+            <GridItem w="100%" h={['95vh',"100vh"]} px={["none","10xpx"]} className="content" bg="brand.200">
                 {children}
             </GridItem>
         </>
@@ -46,12 +50,13 @@ function Content({ children }: { children: React.ReactNode }) {
 function SideBars({ children }: { children: React.ReactNode }) {
     return (
         <>
-            <GridItem 
-            h='100vh' 
-            bg="white"
-            position="sticky"
-            top="0"
-            left="0"
+            <GridItem
+                h={["45px",'100vh']}
+                maxH='100vh'
+                bg="white"
+                position="sticky"
+                top="0"
+                left="0"
             >
                 {children}
             </GridItem>

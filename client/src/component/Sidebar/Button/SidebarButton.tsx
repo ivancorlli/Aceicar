@@ -19,7 +19,9 @@ const SidebarButton = (props: Props) => {
             bg={params == props.link ? "brand.100" : "white"}
             color={params == props.link ? "white":"brand.100"}
             borderRadius={params == props.link ? "md" : "none"}
-            padding="10px" >
+            padding="10px" 
+            alignItems="center"
+            >
                 <Icon as={props.icon}w={5} h={5}/>
                 <Text 
                 fontWeight={"light"}

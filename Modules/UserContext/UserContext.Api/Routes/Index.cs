@@ -16,11 +16,12 @@ public static class Index
     internal static IEndpointRouteBuilder MapPosts(this IEndpointRouteBuilder endpoint)
     {
         endpoint.MapPost("/new", CreateUser.Execute);
+        endpoint.MapPost("/new-provider",CreateUserProvider.Execute);
         return endpoint;
     }
     internal static IEndpointRouteBuilder MapGets(this IEndpointRouteBuilder endpoint)
     {
-        endpoint.MapGet("/all",Allusers.Execute);
+        endpoint.MapGet("/me",GetMe.Execute);
         return endpoint;
     }
 }

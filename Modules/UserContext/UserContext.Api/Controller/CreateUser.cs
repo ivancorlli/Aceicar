@@ -8,8 +8,6 @@ namespace UserContext.Api.Controller;
 
 
 public sealed record CreateUserRequest(string Email);
-
-
 public static class CreateUser
 {
     public static async Task<Microsoft.AspNetCore.Http.IResult> Execute(

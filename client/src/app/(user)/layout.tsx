@@ -1,6 +1,7 @@
 import Provider from '@/theme/Provider'
 import Layout from '@/template/layout/RootLayout'
-import NextAuth from '@/utils/NextAuth'
+import NextAuth from '@/auth/NextAuth'
+import UserProvider from '@/context/UserContext'
 
 export const metadata = {
   title: 'Create Next App',
@@ -12,6 +13,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+
+
   return (
     <html lang="es">
       {/*
@@ -19,13 +22,15 @@ export default function RootLayout({
         head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
       */}
       <head />
-      <body style={{ width: '100%' }}>
+      <body>
         <NextAuth>
+          <UserProvider>
           <Provider>
             <Layout>
               {children}
             </Layout>
           </Provider>
+          </UserProvider>
         </NextAuth>
       </body>
     </html >
