@@ -19,7 +19,7 @@ public sealed class Index
         CancellationToken cancellationToken
         )
     {
-        UserId UserId = new(command.UserId);
+        UserId UserId = UserId.Parse(command.UserId);
         Username Username = Username.Create(command.Username);
         Result<User> result = await _manager.ChangeUsername(UserId,Username);
         if(result.IsFailure) return OperationResult.Invalid(result.Error.Message);

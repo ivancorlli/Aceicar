@@ -1,6 +1,5 @@
 using Marten.Events.Aggregation;
 using UserContext.Application.ViewModel;
-using UserContext.Core.Enumerable;
 using UserContext.Core.Event.UserEvent;
 using UserContext.Core.ValueObject;
 

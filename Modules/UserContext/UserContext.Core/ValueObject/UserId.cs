@@ -3,24 +3,24 @@ namespace UserContext.Core.ValueObject;
 
 public record UserId
 {
-    public Guid Value {get;init;}
+    public Guid Value {get;protected set;}
     
-    
-    private UserId()
+    public static UserId Parse(string userId)
     {
-        Value = Guid.NewGuid();
+        UserId newUserId= new(); 
+        newUserId.Value = Guid.Parse(userId);
+        return newUserId;
     }
-    public UserId(string userId)
+    public static UserId Parse(Guid userId)
     {
-        Value = Guid.Parse(userId);
-    }
-        public UserId(Guid userId)
-    {
-        Value = userId;
+        UserId newUserId= new(); 
+        newUserId.Value = userId;
+        return newUserId;
     }
     public static UserId Create()
     {
         UserId newUserId= new();
+        newUserId.Value = Guid.NewGuid();
         return newUserId;
     }
 

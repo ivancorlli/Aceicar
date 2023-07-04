@@ -9,6 +9,7 @@ public abstract class IUser : IAggregate
 {
     public Email Email { get; protected set; } = default!;
     public Status Status { get; protected set; }
+    public ValueObject.TimeZone TimeZone {get;protected set;} = default!;
     public Username? Username { get; private set; }
     public Phone? Phone { get; protected set; }
     public ProfileImage? Image { get; protected set; }
@@ -71,6 +72,14 @@ public abstract class IUser : IAggregate
         return this;
     }
 
+    public IUser ModifyTimeZone(ValueObject.TimeZone timezone)
+    {
+        TimeZoneModified @event = new(Id,timezone.Country,timezone.Time);
+        Raise(@event);
+        Apply(@event);
+        return this;
+    }
+
     public void Apply(EmailChanged @event)
     {
         Email = Email.Create(@event.Email);
@@ -103,5 +112,9 @@ public abstract class IUser : IAggregate
     public void Apply(LocationModified @event)
     {
         Location = Location.Create(@event.Country,@event.City,@event.State,@event.PostalCode,@event.Status);
+    }
+    public void Apply(TimeZoneModified @event)
+    {
+        TimeZone = ValueObject.TimeZone.Create(@event.Country,@event.Time);
     }
 }

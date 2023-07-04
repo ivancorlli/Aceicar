@@ -2,15 +2,11 @@ namespace UserContext.Core.ValueObject;
 
 public record Username
 {
-    public string Value {get; private set;}
-    private Username(string username)
-    {
-        Value = username;
-    }
-
+    public string Value {get; private set;} = default!;
     public static Username Create(string username)
     {
-        Username newUsername = new(username);
+        Username newUsername = new();
+        newUsername.Value = username.Trim().ToLower();
         return newUsername;
     }
 }

@@ -11,6 +11,7 @@ public class User : IUser
         User newUser = new User();
         newUser.Id = @event.UserId;
         newUser.Email = Email.Create(@event.Email);
+        newUser.TimeZone = ValueObject.TimeZone.Create(@event.TimeZoneCountry,@event.TimeZone);
         newUser.Status = @event.Status;
 
         return newUser;

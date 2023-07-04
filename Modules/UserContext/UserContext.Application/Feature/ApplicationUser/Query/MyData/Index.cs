@@ -18,7 +18,7 @@ public sealed class MyDataHandler
         CancellationToken token
     )
     {
-        UserId userId = new(command.UserId);
+        UserId userId = UserId.Parse(command.UserId);
         UserAccount? user = await service.FindById(userId.Value);
         if(user == null) return OperationResult<UserAccount>.NotFound(new UserNotFound().Message);
         return OperationResult<UserAccount>.Success(user);

@@ -19,7 +19,7 @@ public sealed class Index
 
     )
     {
-        UserId UserId = new(command.UserId);
+        UserId UserId = UserId.Parse(command.UserId);
         User? user = await _session.UserRepository.FindById(UserId.Value);
         if(user == null) return OperationResult.Invalid(new UserNotFound().Message);
         user.SuspendUser();

@@ -18,7 +18,7 @@ public sealed class ConfigAccountHandler
 {
     public static async Task<IOperationResult> Handle(ConfigAccountCommand command, IUoW _session, UserManager _manager, CancellationToken cancellationToken)
     {
-        UserId UserId = new(command.UserId);
+        UserId UserId = UserId.Parse(command.UserId);
         Username Username = Username.Create(command.Username);
         Phone Phone = Phone.Create(command.PhoneCountry, command.PhoneNumber);
         Result<User> result = await _manager.ConfigAccount(UserId,Username,Phone);

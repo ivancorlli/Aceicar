@@ -18,7 +18,7 @@ public sealed class ChangePhoneHandler
         CancellationToken cancellationToken
         )
     {
-        UserId UserId = new(command.UserId);
+        UserId UserId = UserId.Parse(command.UserId);
         Phone Phone = Phone.Create(command.PhoneCountry,command.PhoneNumber);
         Result<User> result = await _manager.ChangePhone(UserId,Phone);
         if(result.IsFailure) return OperationResult.Invalid(result.Error.Message);

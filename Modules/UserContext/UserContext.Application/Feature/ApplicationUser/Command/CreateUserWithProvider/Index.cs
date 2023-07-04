@@ -11,7 +11,9 @@ using UserContext.Core.ValueObject;
 namespace UserContext.Application.Feature.ApplicationUser.Command.CreateUserWithProvider;
 
 public sealed record CreateUserWithProviderCommand(
-    string Email
+    string Email,
+    string TimeZoneCountry,
+    string TimeZone
 );
 public sealed class CreateUserWithProviderHandler
 {
@@ -27,10 +29,10 @@ public sealed class CreateUserWithProviderHandler
         UserId userId = UserId.Create();
         UserAccount? userExists = await service.FindByEmail(Email);
         if (userExists != null) {
-            userId = new(userExists.Id);
+            userId = UserId.Parse(userExists.Id);
             return OperationResult<UserId>.Success(userId);
         }
-        UserCreated @event = new(userId.Value,Email.Value);
+        UserCreated @event = new(userId.Value,Email.Value,command.TimeZoneCountry,command.TimeZone);
         Result<User> newUser = await manager.CreateUser(@event);
         if (newUser.IsFailure) return OperationResult<UserId>.Invalid(newUser.Error.Message);
         session.UserRepository.Create(@event.UserId,@event);

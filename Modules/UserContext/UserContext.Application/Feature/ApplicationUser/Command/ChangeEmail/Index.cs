@@ -18,7 +18,7 @@ public sealed class ChangeEmailHandler
         CancellationToken cancellationToken
     ) 
     {
-        UserId UserId = new(command.UserId);
+        UserId UserId = UserId.Parse(command.UserId);
         Email Email = Email.Create(command.Email);
         Result<User> result = await _manager.ChangeEmail(UserId,Email);
         if(result.IsFailure) return OperationResult.Invalid(result.Error.Message);

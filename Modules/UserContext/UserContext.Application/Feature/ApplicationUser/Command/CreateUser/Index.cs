@@ -8,7 +8,7 @@ using UserContext.Core.ValueObject;
 
 namespace UserContext.Application.Feature.ApplicationUser.Command.CreateUser;
 
-public sealed record CreateUserCommand(string Email);
+public sealed record CreateUserCommand(string Email,string TimeZoneCountry,string TimeZone);
 
 
 public sealed class CreateUserHandler
@@ -19,7 +19,7 @@ public sealed class CreateUserHandler
     {
         Email Email = Email.Create(command.Email);
         UserId UserId = UserId.Create();
-        UserCreated @event = new(UserId.Value, Email.Value);
+        UserCreated @event = new(UserId.Value, Email.Value,command.TimeZoneCountry,command.TimeZone);
         Result<User> newUser = await _manager.CreateUser(@event);
         if (newUser.IsSuccess)
         {
