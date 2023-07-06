@@ -12,5 +12,6 @@ public record UserAccount
     public DateTimeOffset UpdatedAt { get; set; }
     public string? Username { get; set; }
     public Phone? Phone { get; set; }
+    public string? Picture {get;set;}
     public void Update()=> UpdatedAt=DateTimeOffset.Now;
 }

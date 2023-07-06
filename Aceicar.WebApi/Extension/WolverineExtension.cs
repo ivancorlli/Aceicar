@@ -9,9 +9,10 @@ namespace Aceicar.WebApi.Extension;
 public static class WolverineExtension
 {
 
-    public static IServiceCollection InstallWolverine(this IServiceCollection services, IHostBuilder host, IConfiguration configuration)
+    public static IServiceCollection InstallWolverine(this IServiceCollection services, IHostBuilder host, IConfiguration configuration, IHostEnvironment env)
     {
 
+        // WOLVERINE MESSAGE HUB
         host.UseWolverine(o =>
         {
             // Setting up Postgresql-backed message storage
@@ -22,17 +23,15 @@ public static class WolverineExtension
             // for Wolverine's transactional middleware
             o.UseEntityFrameworkCoreTransactions();
 
-            // This forces every outgoing subscriber to use durable
-            // messaging
-            o.Policies.UseDurableOutboxOnAllSendingEndpoints();
-            // Make every single listener endpoint use
-            // durable message storage 
-            o.Policies.UseDurableInboxOnAllListeners();
             o.OptimizeArtifactWorkflow();
+
+            o.Policies.UseDurableLocalQueues();
+            o.Policies.UseDurableInboxOnAllListeners();
+            o.Policies.UseDurableOutboxOnAllSendingEndpoints();
+
             // Add the auto transaction middleware attachment policy. With this option, you will no longer need to decorate handler methods with the [Transactional] attribute.
             o.Policies.AutoApplyTransactions();
 
-            // o.Services.InstallUserContextInfrastructure(configuration);
 
             // Instalar Assemblies
             // - NotificationSystem/Application
@@ -40,6 +39,7 @@ public static class WolverineExtension
 
             // - UserContext/Application
             o.Discovery.IncludeAssembly(typeof(UserContext.Application.Feature.ApplicationUser.Command.CreateUser.CreateUserHandler).Assembly);
+            o.Discovery.IncludeAssembly(typeof(UserContext.Infrastructure.Extension.Index).Assembly);
         });
 
         // This is rebuilding the persistent storage database schema on startup

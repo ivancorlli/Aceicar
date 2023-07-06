@@ -15,8 +15,9 @@ public class UserAccountService : IUserAccountService
 
     public async Task<UserAccount?> FindByEmail(Email Email)
     {
-        var result = await _session.Query<UserAccount>().Where(x=>x.Email == Email.Value).SingleAsync();
-        return result;
+        var result = await _session.Query<UserAccount>().Where(x=>x.Email == Email.Value).ToListAsync();
+        if(result.Count > 0) return result.SingleOrDefault();
+        return null;
     }
 
     public async Task<UserAccount?> FindById(Guid Id)

@@ -1,5 +1,6 @@
 using Common.Basis.Interface;
 using Common.Basis.Utils;
+using Common.IntegrationEvents;
 using UserContext.Core.Aggregate;
 using UserContext.Core.Event.UserEvent;
 using UserContext.Core.Repository;
@@ -25,7 +26,8 @@ public sealed class CreateUserHandler
         {
             User user = newUser.Value;
             _session.UserRepository.Create(user.Id,@event);
-            await _session.SaveChangesAsync(cancellationToken);
+            _session.UserRepository.Push(new UserCreatedEvent(@event.UserId,@event.Email));
+            // await _session.SaveChangesAsync(cancellationToken);
             return OperationResult.Success();
         }
         else return OperationResult.Invalid(newUser.Error.Message);

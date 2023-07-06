@@ -8,11 +8,13 @@ import { MdSupport } from 'react-icons/md'
 import { PiShoppingBagFill, PiShoppingBagLight } from 'react-icons/pi'
 import IconButton from './Button/IconButton'
 import ProfileIcon from './Button/ProfileIcon'
-import useUser from '@/hook/useUser'
+import { useUser } from '@auth0/nextjs-auth0/client'
+import getUser from '@/hook/getUser'
 
 const SidebarShort = () => {
     const { colorMode } = useColorMode();
-    const { user,isLoading} = useUser();
+    const { user:auth,isLoading} = useUser();
+    const { user } = getUser()
     const path = usePathname();
     return (
         <VStack
@@ -37,7 +39,7 @@ const SidebarShort = () => {
                             <IconButton icon={path === "/" ? BiSolidHome : SlHome} text='Inicio' link='/' />  
                                 {
 
-                                    user != null
+                                    auth != null && user 
                                         ?
                                         <>
                                             <IconButton icon={path === "/mycars" ? IoCarSport : IoCarSportOutline} text='Vehiculos' link='/mycars' />
@@ -67,9 +69,9 @@ const SidebarShort = () => {
                                 <>
                                     <Divider />
                                     {
-                                        user != null
+                                        auth != null && user 
                                             ? <>
-                                                <ProfileIcon text={user.Name && user.Surname ? `${user.Name} ${user.Surname}` : undefined} src={user.ProfileImage ? user.ProfileImage : user.Email} link={`/user/${user.UserId}`} />
+                                                <ProfileIcon text={user.Name && user.Surname ? `${user.Name} ${user.Surname}` : undefined} src={user.Picture ? user.Picture : user.Email} link={`/user/${user.UserId}`} />
                                                 <IconButton icon={SlLogout} text='Cerrar Sesion' link='/api/auth/logout' />
                                             </>
                                             :

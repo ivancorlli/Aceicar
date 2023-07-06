@@ -9,11 +9,12 @@ _builder.Host.ApplyOaktonExtensions();
 
 IServiceCollection services = _builder.Services;
 
-
+// Install Marten
+services.InstallMarten(_builder.Configuration);
+// Install Wolverine
+services.InstallWolverine(_builder.Host, _builder.Configuration,_builder.Environment);
 // Install Modules
 services.InstallModules(_builder.Configuration, _builder.Environment);
-// Install Wolverine
-services.InstallWolverine(_builder.Host, _builder.Configuration);
 // Auth Schema
 services.AddAuthentication(options =>
         {

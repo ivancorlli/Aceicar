@@ -22,6 +22,9 @@ public static class UserConfiguration
         options.Events.AddEventType(typeof(UsernameChanged));
         options.Events.AddEventType(typeof(UserSuspended));
         options.Events.AddEventType(typeof(ImageChanged));
+        options.Events.AddEventType(typeof(ProfileModified));
+        options.Events.AddEventType(typeof(LocationModified));
+        options.Events.AddEventType(typeof(TimeZoneModified));
         // Projections
         options.Projections.LiveStreamAggregation<User>();
         options.Projections.Add<UserAccountProjection>(ProjectionLifecycle.Inline);

@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using Marten;
 using UserContext.Application.ViewModel;
 using UserContext.Core.Aggregate;
 using UserContext.Core.Event.UserEvent;
 using UserContext.Core.Repository;
 using UserContext.Core.ValueObject;
+using Wolverine.Marten;
 
 namespace UserContext.Infrastructure.Repository;
 
@@ -11,15 +13,17 @@ public class UserRepository : IUserRepository
 {
     private IDocumentSession _session;
     private IQuerySession _query;
+    private IMartenOutbox _box;
 
     public UserRepository(
         IDocumentSession session,
-        IQuerySession query
-
+        IQuerySession query,
+        IMartenOutbox box
         )
     {
         _session = session;
         _query = query;
+        _box = box;
     }
 
     public void Apply(User Root)
@@ -37,6 +41,10 @@ public class UserRepository : IUserRepository
         Root.Clear();
     }
 
+    public void Push<T>(T Event)
+    {
+        _box.PublishAsync<T>(Event);
+    }
     public void Create(Guid UserId, UserCreated @event)
     {
         _session.Events.StartStream<User>(UserId, @event);

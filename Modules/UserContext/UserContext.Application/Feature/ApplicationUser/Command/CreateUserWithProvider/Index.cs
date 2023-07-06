@@ -1,5 +1,6 @@
 using Common.Basis.Interface;
 using Common.Basis.Utils;
+using Common.IntegrationEvents;
 using UserContext.Application.Service;
 using UserContext.Application.ViewModel;
 using UserContext.Core.Aggregate;
@@ -36,7 +37,8 @@ public sealed class CreateUserWithProviderHandler
         Result<User> newUser = await manager.CreateUser(@event);
         if (newUser.IsFailure) return OperationResult<UserId>.Invalid(newUser.Error.Message);
         session.UserRepository.Create(@event.UserId,@event);
-        await session.SaveChangesAsync(cancellationToken);
+        session.UserRepository.Push(new UserCreatedEvent(@event.UserId,@event.Email));
+        // await session.SaveChangesAsync(cancellationToken);
         return OperationResult<UserId>.Success(userId);
     }
 

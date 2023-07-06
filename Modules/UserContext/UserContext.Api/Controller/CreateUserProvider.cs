@@ -2,6 +2,7 @@ using Common.Basis.Enum;
 using Common.Basis.Interface;
 using Microsoft.AspNetCore.Mvc;
 using UserContext.Application.Feature.ApplicationUser.Command.ChangePhone;
+using UserContext.Application.Feature.ApplicationUser.Command.ChangePicture;
 using UserContext.Application.Feature.ApplicationUser.Command.ChangeUsername;
 using UserContext.Application.Feature.ApplicationUser.Command.ConfigAccount;
 using UserContext.Application.Feature.ApplicationUser.Command.CreateUserWithProvider;
@@ -15,6 +16,7 @@ public sealed record CreateUserProviderRequest(
     string Email,
     string TimeZoneCountry,
     string TimeZone,
+    string? Picture,
     string? Username,
     string? PhoneCountry,
     string? PhoneNumber,
@@ -57,6 +59,12 @@ public static class CreateUserProvider
         {
                 ModifyProfileCommand commnand3 = new(result.Data.Value.ToString(),Body.Name,Body.Surname,Body.Gender,DateTime.Parse(Body.Birth));
                 IOperationResult result3 = await Bus.InvokeAsync<IOperationResult>(commnand3);
+        }
+
+        if(!string.IsNullOrEmpty(Body.Picture))
+        {
+                ChangePictureCommand command4 = new(result.Data.Value.ToString(),Body.Picture);
+                IOperationResult result4 = await Bus.InvokeAsync<IOperationResult>(command4);
         }
 
 

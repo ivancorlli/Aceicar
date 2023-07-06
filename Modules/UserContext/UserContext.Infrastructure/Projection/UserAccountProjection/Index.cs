@@ -44,6 +44,9 @@ public class UserAccountProjection : SingleStreamProjection<UserAccount>
         user.Update();
     }
 
-
+    public void Apply(ImageChanged @event, UserAccount user)
+    {
+        user.Picture = @event.Image;
+    }
 
 }

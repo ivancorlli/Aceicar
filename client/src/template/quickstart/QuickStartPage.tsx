@@ -8,6 +8,7 @@ import { QuickStartContext } from "./QuickStartLayout";
 import PhoneVerification from "./PhoneVerification";
 import ProfileConfiguration from "./ProfileConfiguration";
 import LocationConfiguration from "./LocationConfiguration";
+import { WithAuth } from "@/auth/WithAuth";
 
 
 function QuickStartPage() {

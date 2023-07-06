@@ -10,12 +10,15 @@ import React from 'react'
 import SidebarButton from './Button/SidebarButton';
 import ProfileButton from './Button/ProfileButton';
 import { usePathname } from 'next/navigation';
-import useUser from '@/hook/useUser';
+import { useUser } from '@auth0/nextjs-auth0/client';
+import getUser from '@/hook/getUser';
 
 const SidebarLarge = () => {
   const { colorMode } = useColorMode();
-  const { user, isLoading } = useUser();
+  const { user:auth,isLoading } = useUser();
+  const { user} = getUser()
   const path = usePathname();
+
   return (
     <VStack
       display={["none", "none", "none", "flex"]}
@@ -32,12 +35,12 @@ const SidebarLarge = () => {
         <VStack w='100%' spacing={2} alignItems='start'>
           {
 
-            isLoading ? "Loading.." :
+            isLoading ? <span>Loading</span> :
             <>
               <SidebarButton icon={path === "/" ? BiSolidHome : SlHome} text="Inicio" link='/' />
               {
 
-                user !== undefined
+                auth !== undefined && user
                   ?
                   <>
                     <SidebarButton icon={path === "/mycars" ? IoCarSport : IoCarSportOutline} text='Vehiculos' link='/mycars' />
@@ -62,13 +65,13 @@ const SidebarLarge = () => {
 
         <VStack w='100%' spacing={5} alignItems="start">
           {
-            isLoading? "Loading ...":
+            isLoading? <span>Loading</span>:
             <>
             <Divider />
           {
-            user !== null
+            auth !== null && user 
             ? <>
-                <ProfileButton text={user.Name && user.Surname ? `${user.Name} ${user.Surname}` : undefined} src={user.ProfileImage ? user.ProfileImage : user.Email} link={`/user/${user.UserId}`} />
+                <ProfileButton text={user.Name && user.Surname ? `${user.Name} ${user.Surname}` : undefined} src={user.Picture ? user.Picture : user.Email} link={`/user/${user.UserId}`} />
                 <SidebarButton icon={SlLogout} text='Cerrar Sesion' link='/api/auth/logout' />
                 </>
                 :

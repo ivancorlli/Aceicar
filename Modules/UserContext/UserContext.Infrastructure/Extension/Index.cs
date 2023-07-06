@@ -25,27 +25,16 @@ public static class Index
 
     internal static IServiceCollection InstallDb(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
     {
-        services.AddMarten(opts =>
+        services.AddSingleton<IDocumentStore>(sp =>
         {
-            opts.Connection(configuration.GetConnectionString("UserContextDb")!);
-            opts.Events.StreamIdentity = StreamIdentity.AsGuid;
-
-            opts.UseDefaultSerialization(
-                serializerType:SerializerType.Newtonsoft ,
-                // Optionally override the enum storage
-                enumStorage: EnumStorage.AsString,
-                // Optionally override the member casing
-                casing: Casing.CamelCase
-            );
-
-            opts.AutoCreateSchemaObjects = AutoCreate.CreateOrUpdate;
-            opts.ConfigureUser();
-        })
-        .UseLightweightSessions()
-        .ApplyAllDatabaseChangesOnStartup()
-        .AddAsyncDaemon(Marten.Events.Daemon.Resiliency.DaemonMode.HotCold)
-
-        ;
+            var connectionString = configuration.GetConnectionString("UserContextDb")!;
+            var documentStore = DocumentStore.For(options =>
+            {
+                options.Connection(connectionString);
+                options.ConfigureUser();
+            });
+            return documentStore;
+        });
         return services;
     }
 
@@ -56,7 +45,7 @@ public static class Index
         services.AddScoped<UserManager>();
 
         // appliaction services
-        services.AddScoped<IUserAccountService,UserAccountService>();
+        services.AddScoped<IUserAccountService, UserAccountService>();
         return services;
     }
 

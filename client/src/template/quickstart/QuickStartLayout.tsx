@@ -2,7 +2,6 @@
 import { Box, Container ,Step, StepDescription, StepIcon, StepIndicator, StepNumber, StepSeparator, StepStatus, StepTitle, Stepper, VStack, useSteps } from '@chakra-ui/react'
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import React, { createContext } from 'react'
-import { WithAuth } from '@/auth/WithAuth';
 
 
 const steps = [
@@ -93,7 +92,5 @@ function GuideMobile({index}:{index:number}) {
 
 
 
-
-
 export {QuickStartContext}
-export default WithAuth(QuickStartLayout)
+export default withPageAuthRequired(QuickStartLayout)
