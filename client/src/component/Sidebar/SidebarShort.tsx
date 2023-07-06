@@ -69,7 +69,7 @@ const SidebarShort = () => {
                                     {
                                         user != null
                                             ? <>
-                                                <ProfileIcon text={user.Profile?.Name ?? undefined} src={user.ProfileImage ? user.ProfileImage : user.Email} link={`/user/${user.UserId}`} />
+                                                <ProfileIcon text={user.Name && user.Surname ? `${user.Name} ${user.Surname}` : undefined} src={user.ProfileImage ? user.ProfileImage : user.Email} link={`/user/${user.UserId}`} />
                                                 <IconButton icon={SlLogout} text='Cerrar Sesion' link='/api/auth/logout' />
                                             </>
                                             :

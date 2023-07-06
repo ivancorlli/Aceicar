@@ -16,7 +16,6 @@ const SidebarLarge = () => {
   const { colorMode } = useColorMode();
   const { user, isLoading } = useUser();
   const path = usePathname();
-
   return (
     <VStack
       display={["none", "none", "none", "flex"]}
@@ -32,59 +31,57 @@ const SidebarLarge = () => {
       <Container w='100%' m="0" px="5px" >
         <VStack w='100%' spacing={2} alignItems='start'>
           {
-            isLoading
-              ?
-              ""
-              :
-              <>
-                <SidebarButton icon={path === "/" ? BiSolidHome : SlHome} text='Inicio' link='/' />
-                {
 
-                  user != null
-                    ?
-                    <>
-                      <SidebarButton icon={path === "/mycars" ? IoCarSport : IoCarSportOutline} text='Vehiculos' link='/mycars' />
-                      <SidebarButton icon={path === "/mybills" ? IoSpeedometerSharp : IoSpeedometerOutline} text='Resumen' link='/mybills' />
-                      <SidebarButton icon={path === "/support" ? MdSupport : SlSupport} text='Soporte' link='/support' />
-                      <SidebarButton icon={path === "/settings" ? IoSettingsSharp : SlSettings} text='Configuracion' link='/settings' />
-                      <SidebarButton icon={path === "/business" ? PiShoppingBagFill : PiShoppingBagLight} text='Registra tu negocio' link='/business' />
-                    </>
-                    :
-                    <>
-                      <SidebarButton icon={path === "/support" ? MdSupport : SlSupport} text='Soporte' link='/support' />
-                      <SidebarButton icon={path === "/business" ? PiShoppingBagFill : PiShoppingBagLight} text='Registra tu negocio' link='/business' />
-                    </>
-                }
-              </>
+            isLoading ? "Loading.." :
+            <>
+              <SidebarButton icon={path === "/" ? BiSolidHome : SlHome} text="Inicio" link='/' />
+              {
+
+                user !== undefined
+                  ?
+                  <>
+                    <SidebarButton icon={path === "/mycars" ? IoCarSport : IoCarSportOutline} text='Vehiculos' link='/mycars' />
+                    <SidebarButton icon={path === "/mybills" ? IoSpeedometerSharp : IoSpeedometerOutline} text='Resumen' link='/mybills' />
+                    <SidebarButton icon={path === "/support" ? MdSupport : SlSupport} text='Soporte' link='/support' />
+                    <SidebarButton icon={path === "/settings" ? IoSettingsSharp : SlSettings} text='Configuracion' link='/settings' />
+                    <SidebarButton icon={path === "/business" ? PiShoppingBagFill : PiShoppingBagLight} text='Registra tu negocio' link='/business' />
+                  </>
+                  :
+                  <>
+                    <SidebarButton icon={path === "/support" ? MdSupport : SlSupport} text='Soporte' link='/support' />
+                    <SidebarButton icon={path === "/business" ? PiShoppingBagFill : PiShoppingBagLight} text='Registra tu negocio' link='/business' />
+                  </>
+              }
+            </>
 
           }
+
         </VStack>
       </Container>
       <Container w='100%' px="5px" m="0" >
-        {
-          <VStack w='100%' spacing={5} alignItems="start">
-            {
-              isLoading
-                ? ""
-                :
-                <>
-                  <Divider />
-                  {
-                    user != null
-                      ? <>
-                        <ProfileButton text={user.Profile?.Name ?? undefined} src={user.ProfileImage ? user.ProfileImage : user.Email} link={`/user/${user.UserId}`} />
-                        <SidebarButton icon={SlLogout} text='Cerrar Sesion' link='/api/auth/logout' />
-                      </>
-                      :
-                      <SidebarButton icon={SlLogin} text='Iniciar Sesion' link='/api/auth/login' />
-                  }
+
+        <VStack w='100%' spacing={5} alignItems="start">
+          {
+            isLoading? "Loading ...":
+            <>
+            <Divider />
+          {
+            user !== null
+            ? <>
+                <ProfileButton text={user.Name && user.Surname ? `${user.Name} ${user.Surname}` : undefined} src={user.ProfileImage ? user.ProfileImage : user.Email} link={`/user/${user.UserId}`} />
+                <SidebarButton icon={SlLogout} text='Cerrar Sesion' link='/api/auth/logout' />
                 </>
+                :
+                <SidebarButton icon={SlLogin} text='Iniciar Sesion' link='/api/auth/login' />
+              }
+          </>
             }
-          </VStack>
-        }
+        </VStack>
+
       </Container>
     </VStack>
   )
 }
+
 
 export default SidebarLarge

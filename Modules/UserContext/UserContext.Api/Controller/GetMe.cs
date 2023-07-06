@@ -15,6 +15,7 @@ public static class GetMe
         IMessageBus Bus
     )
     {
+        Console.WriteLine(Context);
         string UserId = string.Empty;
         if(userId != null) UserId = userId;
         MyDataCommand command = new(UserId);

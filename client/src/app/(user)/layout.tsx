@@ -1,7 +1,6 @@
 import Provider from '@/theme/Provider'
 import Layout from '@/template/layout/RootLayout'
 import NextAuth from '@/auth/NextAuth'
-import UserProvider from '@/context/UserContext'
 
 export const metadata = {
   title: 'Create Next App',
@@ -24,13 +23,11 @@ export default function RootLayout({
       <head />
       <body>
         <NextAuth>
-          <UserProvider>
           <Provider>
             <Layout>
               {children}
             </Layout>
           </Provider>
-          </UserProvider>
         </NextAuth>
       </body>
     </html >

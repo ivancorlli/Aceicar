@@ -79,7 +79,7 @@ const MobileMenu = () => {
                                                 {
                                                     user != null
                                                         ? <>
-                                                            <ProfileButton text={user.Profile?.Name ?? undefined} src={user.ProfileImage ? user.ProfileImage : user.Email} link={`/user/${user.UserId}`} />
+                                                            <ProfileButton text={user.Name && user.Surname ? `${user.Name} ${user.Surname}` : undefined} src={user.ProfileImage ? user.ProfileImage : user.Email} link={`/user/${user.UserId}`} />
                                                             <SidebarButton icon={SlLogout} text='Cerrar Sesion' link='/api/auth/logout' />
                                                         </>
                                                         :
