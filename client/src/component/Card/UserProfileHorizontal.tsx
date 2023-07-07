@@ -1,3 +1,4 @@
+import { UserGender } from '@/lib/enum/UserGender'
 import GetAge from '@/utils/GetAge'
 import { Avatar, HStack, Text, VStack } from '@chakra-ui/react'
 import React from 'react'
@@ -9,12 +10,12 @@ interface IintialForm {
     gender: string
 }
 
-const UserProfileHorizontal = ({ form }: { form: IintialForm }) => {
+const UserProfileHorizontal = ({ form,src }: { form: IintialForm,src?:string}) => {
 
 
     return (
         <HStack alignItems="center" justifyContent="center" spacing={8}>
-            <Avatar name={`${form.name} ${form.surname}`} bg={form.name ? "brand.100" : "gray"} color="white" size="lg" />
+            <Avatar name={!src?`${form.name} ${form.surname}`:""} src={src} bg={form.name ? "brand.100" : "gray"} color="white" size="lg" />
             <VStack spacing={0} alignItems="start">
                 <Text fontSize="lg" fontWeight="bold" >
                     {form.name} {form.surname}
@@ -27,7 +28,7 @@ const UserProfileHorizontal = ({ form }: { form: IintialForm }) => {
                         : <></>
                 }
                 <Text fontSize="sm" color="gray" >
-                    {form.gender}
+                    {form.gender == UserGender.Male ? "Masculino" : "Femenino"}
                 </Text>
             </VStack>
         </HStack>

@@ -93,4 +93,4 @@ function GuideMobile({index}:{index:number}) {
 
 
 export {QuickStartContext}
-export default withPageAuthRequired(QuickStartLayout)
+export default QuickStartLayout

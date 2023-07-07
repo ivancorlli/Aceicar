@@ -8,7 +8,6 @@ import { QuickStartContext } from "./QuickStartLayout";
 import PhoneVerification from "./PhoneVerification";
 import ProfileConfiguration from "./ProfileConfiguration";
 import LocationConfiguration from "./LocationConfiguration";
-import { WithAuth } from "@/auth/WithAuth";
 
 
 function QuickStartPage() {
@@ -16,7 +15,6 @@ function QuickStartPage() {
     const Advance = useContext(QuickStartContext)
 
     useEffect(() => {
-        console.log(params)
         getPosition()
     }, [params])
 
@@ -87,7 +85,7 @@ function SetpOne() {
         <>
             <VStack w="100%" >
                 <UserAccount form={form} />
-                <Container w={["100%","80%","50%"]}>
+                <Container w={["100%","80%","40%"]}>
                     <form onSubmit={(e) => handleSubmit(e)} style={{ width: "100%%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "2rem" }}>
                         <VStack w="100%">
                             <Input name='username' defaultValue={form.username} onChange={(e) => handleChange(e)} variant='filled' type="text" autoCapitalize="true" autoComplete="text" placeholder='Nombre de usuario' borderColor="brand.100" bg="white" _focus={{ borderColor: "brand.100" }} />
