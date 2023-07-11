@@ -17,9 +17,8 @@ public static class ChangePictureHandler
     {
         ProfileImage picture = new ProfileImage(command.Picture);
         User? user = await session.UserRepository.FindById(Guid.Parse(command.UserId));
-        if(user == null) return OperationResult.NotFound(new UserNotFound().Message);
+        if(user == null) return OperationResult.NotFound(new UserNotFound());
         user.ChangeImage(picture);
-        session.UserRepository.Apply(user);
         return OperationResult.Success();
     }   
 }

@@ -1,4 +1,5 @@
 using UserContext.Infrastructure.Extension;
+using NotificationSystem.Infrastructure.Extension;
 
 public static class ModulesExtensions
 {
@@ -7,6 +8,8 @@ public static class ModulesExtensions
     {
         // Install User Context
         services.InstallUserContextInfrastructure(configuration,environment);
+        // Install Notification System
+        services.InstallNotificationSystemInfrastructure(configuration,environment);
         return services;
     }
 

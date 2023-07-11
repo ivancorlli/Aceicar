@@ -18,14 +18,13 @@ public static class ModifyProfileHandler
         CancellationToken cancellationToken
     )
     {
-        UserId userId = UserId.Parse(command.UserId);
-        if(command.Gender != Gender.Male || command.Gender != Gender.Female) return OperationResult.Invalid("Invalid gender");
+        Guid userId = Guid.Parse(command.UserId);
+        if(command.Gender != Gender.Male && command.Gender != Gender.Female) return OperationResult.Invalid(new InvalidGender());
         Profile profile = Profile.Create(command.Name,command.Surname,command.Gender,command.Birth);
-        User? user = await session.UserRepository.FindById(userId.Value);
-        if(user == null) return OperationResult.NotFound(new UserNotFound().Message);
+        User? user = await session.UserRepository.FindById(userId);
+        if(user == null) return OperationResult.NotFound(new UserNotFound());
         user.ModifyProfile(profile);
         session.UserRepository.Apply(user);
-        await session.SaveChangesAsync(cancellationToken);
         return OperationResult.Success();         
     }
 }

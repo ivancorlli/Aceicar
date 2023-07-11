@@ -13,12 +13,11 @@ namespace UserContext.Application.Feature.ApplicationUser.Command.CreateUserWith
 
 public sealed record CreateUserWithProviderCommand(
     string Email,
-    string TimeZoneCountry,
     string TimeZone
 );
 public sealed class CreateUserWithProviderHandler
 {
-    public static async Task<IOperationResult<UserId>> Handle(
+    public static async Task<IOperationResult<Guid>> Handle(
         CreateUserWithProviderCommand command,
         IUserAccountService service,
         IUoW session,
@@ -27,19 +26,19 @@ public sealed class CreateUserWithProviderHandler
     )
     {
         Email Email = Email.Create(command.Email);
-        UserId userId = UserId.Create();
+        Guid userId = Guid.NewGuid();
+        TimeZoneInfo TimeZone = TimeZoneInfo.FindSystemTimeZoneById(command.TimeZone);
         UserAccount? userExists = await service.FindByEmail(Email);
         if (userExists != null) {
-            userId = UserId.Parse(userExists.Id);
-            return OperationResult<UserId>.Success(userId);
+            userId = userExists.Id;
+            return OperationResult<Guid>.Success(userId);
         }
-        UserCreated @event = new(userId.Value,Email.Value,command.TimeZoneCountry,command.TimeZone);
+        UserCreated @event = new(userId,Email.Value,TimeZone.Id);
         Result<User> newUser = await manager.CreateUser(@event);
-        if (newUser.IsFailure) return OperationResult<UserId>.Invalid(newUser.Error.Message);
+        if (newUser.IsFailure) return OperationResult<Guid>.Invalid(newUser.Error);
         session.UserRepository.Create(@event.UserId,@event);
         session.UserRepository.Push(new UserCreatedEvent(@event.UserId,@event.Email));
-        // await session.SaveChangesAsync(cancellationToken);
-        return OperationResult<UserId>.Success(userId);
+        return OperationResult<Guid>.Success(userId);
     }
 
 }

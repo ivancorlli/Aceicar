@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using Common.Basis.Enum;
 using Common.Basis.Interface;
+using UserContext.Api.utils;
 using UserContext.Application.Feature.ApplicationUser.Query.MyData;
 using UserContext.Application.ViewModel;
 using Wolverine;
@@ -15,14 +17,17 @@ public static class GetMe
         IMessageBus Bus
     )
     {
-        Console.WriteLine(Context);
         string UserId = string.Empty;
-        if(userId != null) UserId = userId;
+        if(userId != null) {
+            UserId = userId;
+        }else {
+            ClaimsPrincipal claim = Context.User;
+            string? idClaim = claim.FindFirstValue("userId");
+            if(idClaim != null) UserId = idClaim;
+        }
         MyDataCommand command = new(UserId);
         IOperationResult<UserAccount> result = await Bus.InvokeAsync<IOperationResult<UserAccount>>(command);
-        if(result.ResultType == OperationResultType.NotFound) return TypedResults.NotFound<UserAccount>(result.Data);
-        if(result.ResultType == OperationResultType.Invalid) return TypedResults.BadRequest(result.Errors.First());
-        return TypedResults.Ok(new {user = result.Data});
+        return ResultConversor.Convert<UserAccount>(result);
     }
     
 }

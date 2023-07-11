@@ -18,13 +18,12 @@ public sealed class ConfigAccountHandler
 {
     public static async Task<IOperationResult> Handle(ConfigAccountCommand command, IUoW _session, UserManager _manager, CancellationToken cancellationToken)
     {
-        UserId UserId = UserId.Parse(command.UserId);
+        Guid UserId = Guid.Parse(command.UserId);
         Username Username = Username.Create(command.Username);
         Phone Phone = Phone.Create(command.PhoneCountry, command.PhoneNumber);
         Result<User> result = await _manager.ConfigAccount(UserId,Username,Phone);
-        if (result.IsFailure) return OperationResult.Invalid(result.Error.Message);
+        if (result.IsFailure) return OperationResult.Invalid(result.Error);
         _session.UserRepository.Apply(result.Value);
-        await _session.SaveChangesAsync(cancellationToken);
         return OperationResult.Success();
     }
 }

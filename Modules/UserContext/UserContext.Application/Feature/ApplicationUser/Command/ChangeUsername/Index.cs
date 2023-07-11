@@ -19,12 +19,11 @@ public sealed class Index
         CancellationToken cancellationToken
         )
     {
-        UserId UserId = UserId.Parse(command.UserId);
+        Guid UserId = Guid.Parse(command.UserId);
         Username Username = Username.Create(command.Username);
         Result<User> result = await _manager.ChangeUsername(UserId,Username);
-        if(result.IsFailure) return OperationResult.Invalid(result.Error.Message);
+        if(result.IsFailure) return OperationResult.Invalid(result.Error);
         _session.UserRepository.Apply(result.Value);
-        await _session.SaveChangesAsync(cancellationToken);
         return OperationResult.Success();
     }
 

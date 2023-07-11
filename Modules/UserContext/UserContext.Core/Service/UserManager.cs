@@ -29,26 +29,26 @@ public class UserManager
         return Result.Ok(newUser);
     }
 
-    public async Task<Result<User>> ChangeEmail(UserId UserId, Email Email)
+    public async Task<Result<User>> ChangeEmail(Guid UserId, Email Email)
     {
         // search user by email
         bool exists = await _userRepo.IsEmailUsed(Email);
         if (exists) return Result.Fail<User>(new EmailAlreadyUsed(Email));
 
-        User? user = await _userRepo.FindById(UserId.Value);
+        User? user = await _userRepo.FindById(UserId);
         if (user == null) return Result.Fail<User>(new UserNotFound());
         user.ChangeEmail(Email);
         return Result.Ok(user);
 
     }
 
-    public async Task<Result<User>> ChangeUsername(UserId userId, Username username)
+    public async Task<Result<User>> ChangeUsername(Guid UserId, Username username)
     {
         // Search Username already exists 
         bool? usernameTaken = await _userRepo.IsUsernameUsed(username);
         if (usernameTaken != null) return Result.Fail<User>(new UsernameAlreadyUsed(username));
         // Search user by id
-        User? user = await _userRepo.FindById(userId.Value);
+        User? user = await _userRepo.FindById(UserId);
         if (user != null)
         {
             user.ChangeUsername(username);
@@ -57,13 +57,13 @@ public class UserManager
         else return Result.Fail<User>(new UserNotFound());
     }
 
-    public async Task<Result<User>> ChangePhone(UserId userId, Phone phone)
+    public async Task<Result<User>> ChangePhone(Guid userId, Phone phone)
     {
         // Search Phone already exists 
         bool? usernameTaken = await _userRepo.IsPhoneUsed(phone);
         if (usernameTaken != null) return Result.Fail<User>(new PhoneAlreadyUsed(phone));
         // Search user by id
-        User? user = await _userRepo.FindById(userId.Value);
+        User? user = await _userRepo.FindById(userId);
         if (user != null)
         {
             user.ChangePhone(phone);
@@ -72,7 +72,7 @@ public class UserManager
         else return Result.Fail<User>(new UserNotFound());
     }
 
-    public async Task<Result<User>> ConfigAccount(UserId userId, Username? username, Phone? phone)
+    public async Task<Result<User>> ConfigAccount(Guid userId, Username? username, Phone? phone)
     {
         // Search Phone already exists 
         if (phone != null)
@@ -88,7 +88,7 @@ public class UserManager
         }
         // Search user by id
         if (username == null && phone == null) return Result.Fail<User>(new DomainError(ErrorTypes.TypeBuilder(nameof(UserContext),nameof(UserManager)),"Must send username or phone"));
-            User? user = await _userRepo.FindById(userId.Value);
+            User? user = await _userRepo.FindById(userId);
             if (user != null)
             {
                 if(username != null) user.ChangeUsername(username);

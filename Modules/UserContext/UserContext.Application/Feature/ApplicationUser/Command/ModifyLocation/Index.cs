@@ -19,11 +19,10 @@ public static class ModifyLocationHandler
     )
     {
         Location location = Location.Create(command.Country,command.City,command.State,command.PostalCode,LocationStatus.Active);
-        User? user = await session.UserRepository.FindById(UserId.Parse(command.UserId).Value);
-        if(user == null) return OperationResult.NotFound(new UserNotFound().Message);
+        User? user = await session.UserRepository.FindById(Guid.Parse(command.UserId));
+        if(user == null) return OperationResult.NotFound(new UserNotFound());
         user.ModifyLocation(location);
         session.UserRepository.Apply(user);
-        await session.SaveChangesAsync(cancellationToken);
         return OperationResult.Success();
     }
 }

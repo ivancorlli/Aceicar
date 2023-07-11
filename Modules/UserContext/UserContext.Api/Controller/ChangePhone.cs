@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using Common.Basis.Interface;
 using Microsoft.AspNetCore.Mvc;
+using UserContext.Api.utils;
 using UserContext.Application.Feature.ApplicationUser.Command.ChangePhone;
 using Wolverine;
 
@@ -12,12 +14,19 @@ public sealed record ChangePhoneRequest(
 public static class ChangePhone
 {
     public static async Task<Microsoft.AspNetCore.Http.IResult> Execute(
+        [FromRoute] string userId,
         [FromBody] ChangePhoneRequest Body,
-        IMessageBus Bus
+        IMessageBus Bus,
+        HttpContext context
     )
     {
-        ChangePhoneCommand command = new("",Body.PhoneCountry,Body.PhoneNumber);
+        string UserId = string.Empty;
+        ClaimsPrincipal claim = context.User;
+        string? idClaim = claim.FindFirstValue("userId");
+        if (idClaim != null) UserId = idClaim;
+        if (string.IsNullOrEmpty(UserId)) return TypedResults.BadRequest();
+        ChangePhoneCommand command = new(UserId, Body.PhoneCountry, Body.PhoneNumber);
         IOperationResult result = await Bus.InvokeAsync<IOperationResult>(command);
-        return TypedResults.Ok();
+        return ResultConversor.Convert(result);
     }
 }

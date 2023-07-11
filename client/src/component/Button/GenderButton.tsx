@@ -10,7 +10,7 @@ const GenderButton = ({ handleSelect, selectedGender }: { handleSelect: (e: Mous
             {
                 selectedGender === UserGender.Male ?
                     <>
-                        <Button id={UserGender.Male} name={UserGender.Male} onClick={(e) => handleSelect(e)} bg="brand.100" color="white" w="100%">
+                        <Button id={UserGender.Male} name={UserGender.Male} onClick={(e) => handleSelect(e)} bg="brand.100" _hover={{bg:"black"}} color="white" w="100%">
                             Masculino
                         </Button>
                         <Button id={UserGender.Female} name={UserGender.Female} onClick={(e) => handleSelect(e)} bg="white" borderColor="brand.100" borderWidth="2px" w="100%">
@@ -22,19 +22,19 @@ const GenderButton = ({ handleSelect, selectedGender }: { handleSelect: (e: Mous
                     selectedGender === UserGender.Female ?
 
                         <>
-                            <Button id={UserGender.Male} name={UserGender.Male} onClick={(e) => handleSelect(e)} bg="white" borderColor="brand.100" borderWidth="2px" w="100%">
+                            <Button id={UserGender.Male} name={UserGender.Male} onClick={(e) => handleSelect(e)} bg="white" borderColor="brand.100" borderWidth="2px" w="100%" _focus={{ borderColor: "brand.100" }}>
                                 Masculino
                             </Button>
-                            <Button id={UserGender.Female} name={UserGender.Female} onClick={(e) => handleSelect(e)} bg="brand.100" color="white" w="100%">
+                            <Button id={UserGender.Female} name={UserGender.Female} onClick={(e) => handleSelect(e)} _hover={{bg:"black"}} bg="brand.100" color="white" w="100%" _focus={{ borderColor: "brand.100" }}>
                                 Femenino
                             </Button>
                         </>
                         :
                         <>
-                            <Button id={UserGender.Male} name={UserGender.Male} onClick={(e) => handleSelect(e)} bg="white" borderColor="brand.100" borderWidth="2px" w="100%">
+                            <Button id={UserGender.Male} name={UserGender.Male} onClick={(e) => handleSelect(e)} bg="white" borderColor="brand.100" borderWidth="2px" w="100%" _focus={{ borderColor: "brand.100" }}>
                                 Masculino
                             </Button>
-                            <Button id={UserGender.Female} name={UserGender.Female} onClick={(e) => handleSelect(e)} bg="white" borderColor="brand.100" borderWidth="2px" w="100%">
+                            <Button id={UserGender.Female} name={UserGender.Female} onClick={(e) => handleSelect(e)} bg="white" borderColor="brand.100" borderWidth="2px" w="100%" _focus={{ borderColor: "brand.100" }}>
                                 Femenino
                             </Button>
                         </>

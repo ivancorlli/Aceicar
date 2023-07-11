@@ -6,7 +6,7 @@ const font = Outfit({ subsets: ['latin'] })
 
 import SidebarLarge from "@/component/Sidebar/SidebarLarge"
 import { Container, Grid, GridItem } from "@chakra-ui/react"
-import React from "react"
+import React  from "react"
 import MobileNavbar from '@/component/Navbar/MobileNavbar'
 import SidebarShort from '@/component/Sidebar/SidebarShort'
 

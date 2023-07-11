@@ -1,6 +1,7 @@
 using Marten;
 using Marten.Events;
 using Marten.Services.Json;
+using Marten.Storage;
 using Weasel.Core;
 using Wolverine.Marten;
 
@@ -8,23 +9,21 @@ namespace Aceicar.WebApi.Extension;
 
 public static class MartenExtension
 {
-    public static IServiceCollection InstallMarten(this IServiceCollection services,IConfiguration configuration)
+    public static IServiceCollection InstallMarten(this IServiceCollection services, IConfiguration configuration)
     {
-                // MARTEN DATABASE
+        // MARTEN DATABASE
         services.AddMarten(x =>
         {
-            x
-                // You have to specify a connection string for "administration"
-                // with rights to provision new databases on the fly
-                .MultiTenantedWithSingleServer(configuration.GetConnectionString("MessageDb")!)
-
-                // You can map multiple tenant ids to a single named database
-                .WithTenants("usercontextdb").InDatabaseNamed("UserContextDb")
-
-                // Just declaring that there are additional tenant ids that should
-                // have their own database
-                .WithTenants("notificationcontextdb").InDatabaseNamed("NotificationContextDb"); // own database    
-
+            const string usercontext = "usercontextdb";
+            const string notificationsystem = "notificationsystemdb";
+            x.MultiTenantedDatabases(tenancy =>
+            {   
+            // You would probably be pulling the connection strings out of configuration,
+            // but it's late in the afternoon and I'm being lazy building out this sample!
+            tenancy.AddSingleTenantDatabase(configuration.GetConnectionString("UserContextDb")!,usercontext);
+            tenancy.AddSingleTenantDatabase(configuration.GetConnectionString("NotificationSystemDb")!,notificationsystem);
+            });
+            x.Events.TenancyStyle = TenancyStyle.Conjoined;
             x.AutoCreateSchemaObjects = AutoCreate.CreateOrUpdate;
             x.Events.StreamIdentity = StreamIdentity.AsGuid;
             x.UseDefaultSerialization(
@@ -35,11 +34,10 @@ public static class MartenExtension
                 casing: Casing.CamelCase
             );
         })
-        .IntegrateWithWolverine(configuration.GetConnectionString("MessageDb")!)
         .UseLightweightSessions()
         .ApplyAllDatabaseChangesOnStartup()
         .AddAsyncDaemon(Marten.Events.Daemon.Resiliency.DaemonMode.HotCold)
         ;
         return services;
-    }   
+    }
 }

@@ -11,13 +11,13 @@ import { MdSupport } from 'react-icons/md'
 import { PiShoppingBagFill, PiShoppingBagLight } from 'react-icons/pi'
 import { BiSolidHome } from 'react-icons/bi'
 import { useUser } from '@auth0/nextjs-auth0/client'
-import getUser from '@/hook/getUser'
+import {useAccount} from '@/hook/myAccount'
 
 const MobileMenu = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const path = usePathname();
     const { user:auth, isLoading } = useUser()
-    const { user } = getUser()
+    const { user } = useAccount()
     return (
         <>
             <Button
@@ -49,7 +49,7 @@ const MobileMenu = () => {
                                             <SidebarButton icon={path === "/" ? BiSolidHome : SlHome} text='Inicio' link='/' />
                                             {
 
-                                                auth != null && user 
+                                                auth != undefined && user 
                                                     ?
                                                     <>
                                                         <SidebarButton icon={path === "/mycars" ? IoCarSport : IoCarSportOutline} text='Vehiculos' link='/mycars' />
@@ -79,9 +79,9 @@ const MobileMenu = () => {
                                             <>
                                                 <Divider />
                                                 {
-                                                    auth != null && user 
+                                                    auth != undefined && user 
                                                         ? <>
-                                                            <ProfileButton text={user.Name && user.Surname ? `${user.Name} ${user.Surname}` : undefined} src={user.Picture ? user.Picture : user.Email} link={`/user/${user.UserId}`} />
+                                                            <ProfileButton text={user.Profile?.Name && user.Profile?.Surname ? `${user.Profile?.Name} ${user.Profile?.Surname}` : undefined} src={user.Picture ? user.Picture : user.Email} link={`/user/${user.UserId}`} />
                                                             <SidebarButton icon={SlLogout} text='Cerrar Sesion' link='/api/auth/logout' />
                                                         </>
                                                         :

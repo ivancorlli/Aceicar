@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Container, HStack, Input, InputGroup, InputRightElement, List, ListItem, Text } from "@chakra-ui/react";
+import { Box, Container, Fade, HStack, Input, InputGroup, InputRightElement, List, ListItem, Text, useDisclosure } from "@chakra-ui/react";
 import { ChangeEvent, MouseEvent, FocusEvent, KeyboardEvent, useState, useEffect } from "react";
 import { SlArrowUp, SlMagnifier, SlOptions } from "react-icons/sl";
 
@@ -12,112 +12,110 @@ export interface SelectOptions {
 function SearchSelect(
   {
     fetcher,
-    opts = []
+    opts = [],
+    handleSelect,
+    placeholder,
   }
     :
     {
       opts?: SelectOptions[],
-      fetcher?: (param: string) => Promise<SelectOptions[]>
+      fetcher?: (param: string) => Promise<SelectOptions[]>,
+      handleSelect: (option: SelectOptions) => Promise<void>,
+      placeholder: string,
     }
 ) {
   const [isLoading, setIsLoading] = useState(false)
-  const [isOpen, setOpen] = useState(false)
-  const [options, setOptions] = useState(opts)
+  const [Open, setOpen] = useState(false)
+  const [options, setOptions] = useState<SelectOptions[]>(opts)
   const [search, setSearch] = useState("")
+  const [value, setValue] = useState("")
+  const { isOpen, onToggle, onOpen, onClose } = useDisclosure()
+
 
   useEffect(() => {
-    if (fetcher != null) {
-      const func = async () => {
-        // const s = await fetcher(search)
-        const s: SelectOptions[] = [
-          {
-            value: 'value',
-            label: 'label1'
-          },
-          {
-            value: 'value2',
-            label: 'label2'
+    let ignore = false
+    setOptions([])
+    if (fetcher != undefined) {
+      if (search != "" && search.length > 3) {
+        fetcher(search).then((data: SelectOptions[]) => {
+          if (!ignore) {
+            setOptions(data)
+            setIsLoading(false)
+            onOpen()
           }
-        ]
-        if (s.length > 0) {
-          setOptions(s)
-        }
+        })
+      } else {
+        setOptions([])
+        onClose()
       }
-      func()
     }
-    if (opts != null) {
-      // let resultSearch = options.filter(x => x.label.toLowerCase().trim() == e.target.value.toLowerCase().trim())
+    return () => {
+      ignore = true
     }
-    setIsLoading(false)
-    setOpen(true)
-  }, [fetcher, opts, search])
+
+  }, [search, fetcher])
 
   function handleOpenClose(e: MouseEvent<HTMLDivElement>) {
-    setOpen(!isOpen)
+    onToggle()
   }
 
   async function handleChange(e: ChangeEvent<HTMLInputElement>) {
+    setValue(e.target.value)
     if (e.target.value.length > 3) {
       setIsLoading(true)
       setSearch(e.target.value)
     } else {
       setIsLoading(false)
+      onClose()
+      setOptions([])
+      setSearch("")
     }
   }
 
-  // function handleFocus(e:FocusEvent<HTMLInputElement>)
-  // {
-  //   if(options.length >0)
-  //   {
-  //     setOpen(true)
-  //   }else {
-  //     setOpen(false)
-  //   }
-  // }
-  // function handleLeaves(e:MouseEvent<HTMLInputElement>)
-  // {
-  //   setOpen(false)
-  // }
-  // function handleOut(e:FocusEvent<HTMLInputElement>)
-  // {
-  //   setOpen(false)
-  // }
+  function handleFocus(e: FocusEvent<HTMLInputElement>) {
+    if (options.length > 0) {
+      onOpen()
+    } else {
+      onClose()
+    }
+  }
 
-  // function handleKey(e:KeyboardEvent<HTMLInputElement>){
-  //   if(e.code == "Escape") 
-  //   {
-  //     setOpen(false)
-  //   }
-  // }
+  function handleKey(e: KeyboardEvent<HTMLDivElement>) {
+    if (e.code == "Escape") {
+      onClose()
+    }
+  }
 
-  // function handleClick(e:MouseEvent<HTMLInputElement>)
-  // {
-  //   if(options.length > 0)
-  //   {
-  //     setOpen(true)
-  //   }else {
-  //     setOpen(false)
-  //   }
-  // }
+  function handleClick(e: MouseEvent<HTMLInputElement>) {
+    if (options.length > 0) {
+      onOpen()
+    } else {
+      onClose()
+    }
+  }
+
+  async function onSelect(option: SelectOptions) {
+    await handleSelect(option)
+    setValue(option.value)
+    setSearch("")
+  }
 
   return (
-    <Container w="100%">
-      <HStack>
+    <Container w="100%" m="0" p="0" maxH="200" mb="5px" onKeyUp={(e) => handleKey(e)}>
+      <HStack w="100%">
         <InputGroup>
           <Input
+            defaultValue={value}
             w="100%"
-            placeholder='Nombre de usuario'
+            placeholder={placeholder ?? "Selecciona una opcion"}
             borderColor="brand.100"
             bg="white"
             _focus={{ borderColor: "brand.100" }}
             variant='filled'
             type="text"
             onChange={(e) => handleChange(e)}
-          // onFocus={(e)=>handleFocus(e)}
-          // onMouseLeave={(e)=>handleLeaves(e)}
-          // onBlur={(e)=>handleOut(e)}
-          // onKeyUp={(e)=>handleKey(e)}
-          // onClick={(e)=>handleClick(e)}
+            onFocus={(e) => handleFocus(e)}
+            onClick={(e) => handleClick(e)}
           />
           <InputRightElement bg="brand.100" onClick={(e) => handleOpenClose(e)} color="white" borderTopRightRadius={8} borderBottomRightRadius={8}>
             {
@@ -140,27 +138,53 @@ function SearchSelect(
             bg="white"
             spacing={2}
             borderRadius={8}
-            my="5px"
+            mt="8px"
+            maxH="150px"
+            scrollBehavior="smooth"
+            overflowY="scroll"
+            boxShadow="xl"
+            shadow="xl"
+            css={{
+              '&::-webkit-scrollbar': {
+                width: '4px',
+              },
+              '&::-webkit-scrollbar-track': {
+                width: '6px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: "#323130",
+                borderRadius: '24px',
+              }
+            }}
           >
-            {
-              options.length > 0 ?
-                options.map((opt: SelectOptions, idx: number) => {
-                  return (
+            <Fade in={isOpen}>
 
-                    <ListItem
-                      p="5px"
-                      _hover={{ bg: "gray" }}
-                      borderRadius={8}
-                      key={idx}
-                    >
-                      {opt.label}
-                    </ListItem>)
-                })
-                :
-                <Box w="100%" p="10px" textAlign="center">
-                  <Text> Sin resultados </Text>
-                </Box>
-            }
+              {
+                options.length > 0 ?
+                  options.map((value: SelectOptions, index: number) => {
+                    return (
+                      <ListItem
+                        p="5px"
+                        ml="4px"
+                        mt="4px"
+                        mb="4px"
+                        cursor="pointer"
+                        _hover={{ bg: "gray.200", cursor: "pointer" }}
+                        borderRadius={4}
+                        key={index}
+                        onClick={() => onSelect(value)}
+
+                      >
+                        {value.label}
+                      </ListItem>
+                    )
+                  })
+                  :
+                  <Box w="100%" p="10px" textAlign="center">
+                    <Text> Sin resultados </Text>
+                  </Box>
+              }
+            </Fade>
           </List>
           :
           <>
@@ -169,42 +193,4 @@ function SearchSelect(
     </Container>
   )
 }
-
-// function ListBox({ options, isOpen }: { options: SelectOptions[], isOpen: boolean }) {
-//   console.log(options)
-//   return (
-//     isOpen ?
-//       <List
-//         bg="white"
-//         spacing={2}
-//         borderRadius={8}
-//         my="5px"
-//       >
-//         {
-//           options.length > 0 ?
-//             options.map((opt: SelectOptions, idx: number) => {
-//               return (
-
-//                 <ListItem
-//                   p="5px"
-//                   _hover={{ bg: "gray" }}
-//                   borderRadius={8}
-//                   key={idx}
-//                 >
-//                   {opt.label}
-//                 </ListItem>)
-//             })
-//             :
-//             <Box w="100%" p="10px" textAlign="center">
-//               <Text> Sin resultados </Text>
-//             </Box>
-//         }
-//       </List>
-//       :
-//       <>
-//       </>
-//   )
-
-// }
-
 export default SearchSelect

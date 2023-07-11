@@ -19,12 +19,11 @@ public sealed class Index
 
     )
     {
-        UserId UserId = UserId.Parse(command.UserId);
-        User? user = await _session.UserRepository.FindById(UserId.Value);
-        if(user == null) return OperationResult.Invalid(new UserNotFound().Message);
+        Guid UserId = Guid.Parse(command.UserId);
+        User? user = await _session.UserRepository.FindById(UserId);
+        if(user == null) return OperationResult.Invalid(new UserNotFound());
         user.SuspendUser();
         _session.UserRepository.Apply(user);
-        await _session.SaveChangesAsync(cancellationToken);
         return OperationResult.Success();
     }
 

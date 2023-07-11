@@ -1,21 +1,12 @@
 import { Avatar, Text, VStack } from '@chakra-ui/react'
 import React  from 'react'
 
-interface IintialForm {
-    username:string,
-    phoneNumber :string
-}
-const intialForm:IintialForm ={
-    username:"Nombre de usuario",
-    phoneNumber:"Numero de telefono"
-}
-
-const UserAccount = ({form = intialForm}:{form?:IintialForm}) => {
+const UserAccount = ({form,image}:{form:{username:string,phoneNumber:string},image?:string}) => {
 
   return (
         <>
             <VStack>
-                <Avatar name={form.username ?? "Nombre de Usuario"} bg={form.username ? "brand.100" : "gray"} color="white" size="2xl" />
+                <Avatar src={image} name={image ? "" : form.username} color="white" size="xl" />
                 <VStack spacing={0}>
                     <Text fontSize="lg" fontWeight="bold" >
                         {form.username.toLocaleUpperCase()}

@@ -29,23 +29,22 @@ public static class WolverineExtension
             o.Policies.UseDurableInboxOnAllListeners();
             o.Policies.UseDurableOutboxOnAllSendingEndpoints();
 
-            // Add the auto transaction middleware attachment policy. With this option, you will no longer need to decorate handler methods with the [Transactional] attribute.
-            o.Policies.AutoApplyTransactions();
-
-
             // Instalar Assemblies
+            // - IntegrationEvents
+            o.Discovery.IncludeAssembly(typeof(Common.IntegrationEvents.UserCreatedEvent).Assembly);
+
             // - NotificationSystem/Application
-            o.Discovery.IncludeAssembly(typeof(NotificationSystem.Application.Command.UserCreatedEvent.UserCreatedHandler).Assembly);
+            o.Discovery.IncludeAssembly(typeof(NotificationSystem.Application.EventHandler.UserCreatedHandler).Assembly);
 
             // - UserContext/Application
             o.Discovery.IncludeAssembly(typeof(UserContext.Application.Feature.ApplicationUser.Command.CreateUser.CreateUserHandler).Assembly);
             o.Discovery.IncludeAssembly(typeof(UserContext.Infrastructure.Extension.Index).Assembly);
         });
 
+        services.AddResourceSetupOnStartup();
         // This is rebuilding the persistent storage database schema on startup
         // and also clearing any persisted envelope stat
         host.UseResourceSetupOnStartup();
-
         return services;
     }
 

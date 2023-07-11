@@ -1,56 +1,54 @@
 'use client'
 import GenderButton from '@/component/Button/GenderButton'
 import UserProfileHorizontal from '@/component/Card/UserProfileHorizontal'
-import getUser from '@/hook/getUser'
+import { usePostProfile } from '@/hook/myAccount'
 import { UserGender } from '@/lib/enum/UserGender'
-import { Button, Container, HStack, Input, VStack } from '@chakra-ui/react'
-import { useRouter } from 'next/navigation'
+import IUser from '@/lib/interface/IUser'
+import { Button, Container, HStack, Heading, Input, VStack } from '@chakra-ui/react'
+import { redirect, useRouter } from 'next/navigation'
 import React, { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react'
 
-interface IintialForm {
+interface ProfileForm {
   name: string,
   surname: string,
-  birth?: string,
+  birth: string,
   gender: string
 }
 
-const intialForm: IintialForm = {
-  name: "",
-  surname: "",
-  birth: undefined,
-  gender: ""
-}
-
-
-
-const ProfileConfiguration = () => {
-  const [form, setForm] = useState(intialForm)
+const ProfileConfiguration = ({ user }: { user: IUser | null }) => {
+  const {isLoading,post} = usePostProfile()
+  if(user != null)
+  {
+      if(user.Profile != undefined)
+      {
+        return redirect("/quickstart?num=2")
+      }
+  }
+  const [form, setForm] = useState<ProfileForm>({ name: "", surname: "", birth: "", gender: "" })
   const [gender, setGender] = useState("")
-  const { user } = getUser()
   const router = useRouter()
-  
 
-  useEffect(()=>{
-    if(user != null)
-    {
-      let initForm:IintialForm = {
-        name: '',
-        surname: '',
-        gender: UserGender.Male
+
+  useEffect(() => {
+    if (user != null) {
+      if (user.Profile) {
+        setForm(
+          {
+            name: user.Profile?.Name,
+            surname: user.Profile?.Surname,
+            birth: user.Profile.Birth,
+            gender: user.Profile.Gender
+          }
+        )
       }
-      if(user.Name && user.Surname) {
-        initForm.name = user.Name;
-        initForm.surname = user.Surname;
-      }
-      setForm(initForm)
-      setGender(UserGender.Male)
     }
-  },[])
+  }, [])
 
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    router.push("/quickstart?num=2")
+    post(form,()=>router.push("/quickstart?num=2"))
+
   }
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
@@ -66,14 +64,14 @@ const ProfileConfiguration = () => {
       setGender(UserGender.Male)
       setForm({
         ...form,
-        gender: "Masculino"
+        gender: UserGender.Male
       })
     }
     if (e.currentTarget.id === UserGender.Female) {
       setGender(UserGender.Female)
       setForm({
         ...form,
-        gender: "Femenino"
+        gender: UserGender.Female
       })
     }
   }
@@ -81,56 +79,62 @@ const ProfileConfiguration = () => {
 
   return (
     <VStack w="100%" spacing={8}>
-      <UserProfileHorizontal form={form} src={user?.Picture ?? undefined}/>
+      <Heading size="lg">
+        Completa tu perfil
+      </Heading>
       <VStack w="100%">
-        <Container w={["100%","80%","50%"]}>
-          <form onSubmit={(e) => handleSubmit(e)} style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "2rem" }}>
-            <VStack w="100%">
-              <Input
-                name='name'
-                defaultValue={form.name}
-                onChange={(e) => handleChange(e)}
-                variant='filled'
-                type="text"
-                autoCapitalize="true"
-                autoComplete="name"
-                placeholder='Nombre'
-                borderColor="brand.100"
-                bg="white"
-                _focus={{ borderColor: "brand.100" }}
-              />
-              <Input
-                name='surname'
-                defaultValue={form.surname}
-                onChange={(e) => handleChange(e)}
-                variant='filled'
-                type="text"
-                autoCapitalize="true"
-                autoComplete="surname"
-                placeholder='Apellido'
-                borderColor="brand.100"
-                bg="white"
-                _focus={{ borderColor: "brand.100" }}
-              />
-              <GenderButton handleSelect={handleSelect} selectedGender={gender} />
-              <Input
-                name='birth'
-                onChange={(e) => handleChange(e)}
-                variant='filled'
-                type="date"
-                autoComplete="true"
-                placeholder=""
-                borderColor="brand.100"
-                bg="white"
-                _focus={{ borderColor: "brand.100" }}
-              />
-            </VStack>
-            <Button type="submit" bg="brand.100" color="white" variant='solid' w="50%" _hover={{ bg: "black" }}>
-              Continuar
-            </Button>
-          </form>
-        </Container>
-
+        <UserProfileHorizontal form={form} src={user?.Picture ?? undefined} />
+        <VStack w="100%">
+          <Container w={["100%", "80%", "50%"]}>
+            <form onSubmit={(e) => handleSubmit(e)} style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "2rem" }}>
+              <VStack w="100%">
+                <Input
+                  name='name'
+                  defaultValue={form.name}
+                  onChange={(e) => handleChange(e)}
+                  variant='filled'
+                  type="text"
+                  autoCapitalize="true"
+                  autoComplete="name"
+                  placeholder='Nombre'
+                  borderColor="brand.100"
+                  bg="white"
+                  _focus={{ borderColor: "brand.100" }}
+                />
+                <Input
+                  name='surname'
+                  defaultValue={form.surname}
+                  onChange={(e) => handleChange(e)}
+                  variant='filled'
+                  type="text"
+                  autoCapitalize="true"
+                  autoComplete="surname"
+                  placeholder='Apellido'
+                  borderColor="brand.100"
+                  bg="white"
+                  _focus={{ borderColor: "brand.100" }}
+                />
+                <GenderButton handleSelect={handleSelect} selectedGender={gender} />
+                <Input
+                  name='birth'
+                  onChange={(e) => handleChange(e)}
+                  variant='filled'
+                  type="date"
+                  autoComplete="true"
+                  placeholder=""
+                  borderColor="brand.100"
+                  bg="white"
+                  _focus={{ borderColor: "brand.100" }}
+                />
+              </VStack>
+              <Button type="submit" bg="brand.100" color="white" variant='solid' w="50%" _hover={{ bg: "black" }}>
+                {
+                  isLoading ? "Enviando.." : 'Continuar'
+                }
+              </Button>
+            </form>
+          </Container>
+        </VStack>
       </VStack>
     </VStack>
   )

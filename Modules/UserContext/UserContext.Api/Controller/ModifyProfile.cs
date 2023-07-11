@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using Common.Basis.Interface;
 using Microsoft.AspNetCore.Mvc;
+using UserContext.Api.utils;
 using UserContext.Application.Feature.ApplicationUser.Command.ProfileModified;
 using Wolverine;
 
@@ -15,12 +17,19 @@ public sealed record ModifyProfileRequest(
 public static class ModifyProfile
 {
     public static async Task<Microsoft.AspNetCore.Http.IResult> Execute(
+        [FromRoute] string userId,
         [FromBody] ModifyProfileRequest Body,
-        IMessageBus Bus
+        IMessageBus Bus,
+        HttpContext context
     )
     {
-        ModifyProfileCommand command = new("",Body.Name,Body.Surname,Body.Gender,DateTime.Parse(Body.Birth));
+        string UserId = string.Empty;
+        ClaimsPrincipal claim = context.User;
+        string? idClaim = claim.FindFirstValue("userId");
+        if (idClaim != null) UserId = idClaim;
+        if (string.IsNullOrEmpty(UserId)) return TypedResults.BadRequest();
+        ModifyProfileCommand command = new(UserId, Body.Name, Body.Surname, Body.Gender, DateTime.Parse(Body.Birth));
         IOperationResult result = await Bus.InvokeAsync<IOperationResult>(command);
-        return TypedResults.Ok();
+        return ResultConversor.Convert(result);
     }
 }

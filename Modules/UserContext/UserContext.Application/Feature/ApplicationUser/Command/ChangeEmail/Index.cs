@@ -18,12 +18,11 @@ public sealed class ChangeEmailHandler
         CancellationToken cancellationToken
     ) 
     {
-        UserId UserId = UserId.Parse(command.UserId);
+        Guid UserId = Guid.Parse(command.UserId);
         Email Email = Email.Create(command.Email);
         Result<User> result = await _manager.ChangeEmail(UserId,Email);
-        if(result.IsFailure) return OperationResult.Invalid(result.Error.Message);
+        if(result.IsFailure) return OperationResult.Invalid(result.Error);
         _session.UserRepository.Apply(result.Value);
-        await _session.SaveChangesAsync(cancellationToken);
         return OperationResult.Success();
     }  
 }

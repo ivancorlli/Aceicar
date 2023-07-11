@@ -28,7 +28,7 @@ const UserProfileHorizontal = ({ form,src }: { form: IintialForm,src?:string}) =
                         : <></>
                 }
                 <Text fontSize="sm" color="gray" >
-                    {form.gender == UserGender.Male ? "Masculino" : "Femenino"}
+                    {form.gender == UserGender.Male ? "Masculino" : form.gender == UserGender.Female ? "Femenino" : ""}
                 </Text>
             </VStack>
         </HStack>

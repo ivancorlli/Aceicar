@@ -9,9 +9,8 @@ public class UnitOfWork : IUoW
     public IUserRepository UserRepository { get; private set; }
 
     public UnitOfWork(
-        IDocumentSession session,
-        IUserRepository userRepo
-
+        IUserRepository userRepo,
+        IDocumentSession session
         )
     {
         Session = session;

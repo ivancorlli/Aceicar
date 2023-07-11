@@ -1,8 +1,7 @@
+import IndexPage from "@/template/index/IndexPage";
 
 export default function Home() {
   return (
-    <main >
-      <span>Inicio</span>
-    </main>
+    <IndexPage/>
   )
 }

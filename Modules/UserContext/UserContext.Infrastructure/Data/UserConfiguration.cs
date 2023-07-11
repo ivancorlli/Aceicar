@@ -9,26 +9,23 @@ namespace UserContext.Infrastructure.Data;
 
 public static class UserConfiguration
 {
-
-    public static StoreOptions ConfigureUser(this StoreOptions options)
+    public  static StoreOptions ConfigureUser(this StoreOptions opts)
     {
-        // Schema
-        options.Schema.For<User>().Identity(x=>x.Id);
-        options.Schema.For<UserAccount>().Identity(x=>x.Id);
+        opts.Schema.For<User>().Identity(x=>x.Id).MultiTenanted();
+        opts.Schema.For<UserAccount>().Identity(x=>x.Id).MultiTenanted();
         // Register events
-        options.Events.AddEventType(typeof(UserCreated));
-        options.Events.AddEventType(typeof(EmailChanged));
-        options.Events.AddEventType(typeof(PhoneChanged));
-        options.Events.AddEventType(typeof(UsernameChanged));
-        options.Events.AddEventType(typeof(UserSuspended));
-        options.Events.AddEventType(typeof(ImageChanged));
-        options.Events.AddEventType(typeof(ProfileModified));
-        options.Events.AddEventType(typeof(LocationModified));
-        options.Events.AddEventType(typeof(TimeZoneModified));
+        opts.Events.AddEventType(typeof(UserCreated));
+        opts.Events.AddEventType(typeof(EmailChanged));
+        opts.Events.AddEventType(typeof(PhoneChanged));
+        opts.Events.AddEventType(typeof(UsernameChanged));
+        opts.Events.AddEventType(typeof(UserSuspended));
+        opts.Events.AddEventType(typeof(ImageChanged));
+        opts.Events.AddEventType(typeof(ProfileModified));
+        opts.Events.AddEventType(typeof(LocationModified));
+        opts.Events.AddEventType(typeof(TimeZoneModified));
         // Projections
-        options.Projections.LiveStreamAggregation<User>();
-        options.Projections.Add<UserAccountProjection>(ProjectionLifecycle.Inline);
-        return options;
+        opts.Projections.LiveStreamAggregation<User>().MultiTenanted();
+        opts.Projections.Add<UserAccountProjection>(ProjectionLifecycle.Inline);
+        return opts;
     }
-
 }

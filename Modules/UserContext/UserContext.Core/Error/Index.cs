@@ -25,3 +25,8 @@ public record UsernameAlreadyUsed : DomainError
 {
     public UsernameAlreadyUsed(Username username) : base(ErrorTypes.TypeBuilder(nameof(UserContext),nameof(UsernameAlreadyUsed)), $"Username {username.Value} already used"){}
 }
+
+public record InvalidGender : DomainError
+{
+    public InvalidGender() : base(ErrorTypes.TypeBuilder(nameof(UserContext),nameof(InvalidGender)), $"Must select a valid gender Male or Female "){}
+}

@@ -2,6 +2,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.IntegrationEvents\Common.IntegrationEvents.csproj" />
+    <ProjectReference Include="..\NotificationSystem.Core\NotificationSystem.Core.csproj" />
+    <ProjectReference Include="..\..\Common\Common.Basis\Common.Basis.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="WolverineFx" Version="0.9.19" />

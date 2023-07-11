@@ -1,10 +1,21 @@
 'use client'
 import EnterPin from '@/component/Input/EnterPin'
+import IUser from '@/lib/interface/IUser'
 import { Button, Container, Heading, Text, VStack } from '@chakra-ui/react'
-import { useRouter } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 import React, { FormEvent, useState } from 'react'
 
-const PhoneVerification = () => {
+const PhoneVerification = ({user}:{user:IUser | null}) => {
+    if(user != null)
+    {
+        if(user.Phone != undefined)
+        {
+            if(user.Phone.Verified)
+            {
+               return redirect("/quickstart?num=1")
+            }
+        }
+    }
     const [code, setCode] = useState("")
     const router = useRouter()
 
@@ -38,7 +49,7 @@ const PhoneVerification = () => {
             <Container w={["100%","80%"]}>
                 <form onSubmit={(e) => handleSubmit(e)} style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "2rem" }}>
 
-                    <EnterPin code='' handleChange={handleChange} />
+                    <EnterPin code={code} handleChange={handleChange} />
                     <Button type="submit" bg="brand.100" color="white" variant='solid' w={["100%", "100%","50%"]} _hover={{ bg: "black" }}>
                         Continuar
                     </Button>

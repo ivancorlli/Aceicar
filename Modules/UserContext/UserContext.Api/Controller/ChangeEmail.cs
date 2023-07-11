@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using Common.Basis.Interface;
 using Microsoft.AspNetCore.Mvc;
+using UserContext.Api.utils;
 using UserContext.Application.Feature.ApplicationUser.Command.ChangeEmail;
 using Wolverine;
 
@@ -11,12 +13,19 @@ public sealed record ChangeEmailRequest(
 public static class ChangeEmail
 {
     public static async Task<Microsoft.AspNetCore.Http.IResult> Execute(
+        [FromRoute] string userId,
         [FromBody] ChangeEmailRequest Body,
-        IMessageBus Bus
+        IMessageBus Bus,
+        HttpContext context
     )
     {
-        ChangeEmailCommand command = new("",Body.Email);
+        string UserId = string.Empty;
+        ClaimsPrincipal claim = context.User;
+        string? idClaim = claim.FindFirstValue("userId");
+        if (idClaim != null) UserId = idClaim;
+        if (string.IsNullOrEmpty(UserId)) return TypedResults.BadRequest();
+        ChangeEmailCommand command = new(UserId, Body.Email);
         IOperationResult result = await Bus.InvokeAsync<IOperationResult>(command);
-        return TypedResults.Ok();
+        return ResultConversor.Convert(result);
     }
 }

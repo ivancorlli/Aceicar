@@ -5,18 +5,20 @@ import { PiShoppingBagFill, PiShoppingBagLight } from 'react-icons/pi';
 import { MdSupport } from 'react-icons/md'
 import { IoCarSport, IoCarSportOutline, IoSettingsSharp, IoSpeedometerOutline, IoSpeedometerSharp } from 'react-icons/io5';
 import { BiSolidHome } from 'react-icons/bi'
-import { Container, Divider, VStack, useColorMode } from '@chakra-ui/react'
+import { Container, Divider, HStack, Icon, Text, VStack, useColorMode } from '@chakra-ui/react'
 import React from 'react'
 import SidebarButton from './Button/SidebarButton';
 import ProfileButton from './Button/ProfileButton';
 import { usePathname } from 'next/navigation';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import getUser from '@/hook/getUser';
+import { useAccount } from '@/hook/myAccount';
+import ButtonSkeleton from './Button/ButtonSkeleton';
+import Link from 'next/link';
 
 const SidebarLarge = () => {
   const { colorMode } = useColorMode();
-  const { user:auth,isLoading } = useUser();
-  const { user} = getUser()
+  const { user: auth, isLoading } = useUser();
+  const { user } = useAccount()
   const path = usePathname();
 
   return (
@@ -35,27 +37,33 @@ const SidebarLarge = () => {
         <VStack w='100%' spacing={2} alignItems='start'>
           {
 
-            isLoading ? <span>Loading</span> :
-            <>
-              <SidebarButton icon={path === "/" ? BiSolidHome : SlHome} text="Inicio" link='/' />
-              {
+            isLoading ?
+              <>
+                <ButtonSkeleton />
+                <ButtonSkeleton />
+                <ButtonSkeleton />
+              </>
+              :
+              <>
+                <SidebarButton icon={path === "/" ? BiSolidHome : SlHome} text="Inicio" link='/' />
+                {
 
-                auth !== undefined && user
-                  ?
-                  <>
-                    <SidebarButton icon={path === "/mycars" ? IoCarSport : IoCarSportOutline} text='Vehiculos' link='/mycars' />
-                    <SidebarButton icon={path === "/mybills" ? IoSpeedometerSharp : IoSpeedometerOutline} text='Resumen' link='/mybills' />
-                    <SidebarButton icon={path === "/support" ? MdSupport : SlSupport} text='Soporte' link='/support' />
-                    <SidebarButton icon={path === "/settings" ? IoSettingsSharp : SlSettings} text='Configuracion' link='/settings' />
-                    <SidebarButton icon={path === "/business" ? PiShoppingBagFill : PiShoppingBagLight} text='Registra tu negocio' link='/business' />
-                  </>
-                  :
-                  <>
-                    <SidebarButton icon={path === "/support" ? MdSupport : SlSupport} text='Soporte' link='/support' />
-                    <SidebarButton icon={path === "/business" ? PiShoppingBagFill : PiShoppingBagLight} text='Registra tu negocio' link='/business' />
-                  </>
-              }
-            </>
+                  auth != undefined && user
+                    ?
+                    <>
+                      <SidebarButton icon={path === "/mycars" ? IoCarSport : IoCarSportOutline} text='Vehiculos' link='/mycars' />
+                      <SidebarButton icon={path === "/mybills" ? IoSpeedometerSharp : IoSpeedometerOutline} text='Resumen' link='/mybills' />
+                      <SidebarButton icon={path === "/support" ? MdSupport : SlSupport} text='Soporte' link='/support' />
+                      <SidebarButton icon={path === "/settings" ? IoSettingsSharp : SlSettings} text='Configuracion' link='/settings' />
+                      <SidebarButton icon={path === "/business" ? PiShoppingBagFill : PiShoppingBagLight} text='Registra tu negocio' link='/business' />
+                    </>
+                    :
+                    <>
+                      <SidebarButton icon={path === "/support" ? MdSupport : SlSupport} text='Soporte' link='/support' />
+                      <SidebarButton icon={path === "/business" ? PiShoppingBagFill : PiShoppingBagLight} text='Registra tu negocio' link='/business' />
+                    </>
+                }
+              </>
 
           }
 
@@ -65,20 +73,43 @@ const SidebarLarge = () => {
 
         <VStack w='100%' spacing={5} alignItems="start">
           {
-            isLoading? <span>Loading</span>:
-            <>
-            <Divider />
-          {
-            auth !== null && user 
-            ? <>
-                <ProfileButton text={user.Name && user.Surname ? `${user.Name} ${user.Surname}` : undefined} src={user.Picture ? user.Picture : user.Email} link={`/user/${user.UserId}`} />
-                <SidebarButton icon={SlLogout} text='Cerrar Sesion' link='/api/auth/logout' />
-                </>
-                :
-                <SidebarButton icon={SlLogin} text='Iniciar Sesion' link='/api/auth/login' />
-              }
-          </>
-            }
+            isLoading ?
+              <>
+                <ButtonSkeleton />
+                <ButtonSkeleton />
+              </>
+              :
+              <>
+                <Divider />
+                {
+                  auth != undefined && user
+                    ? <>
+                      <ProfileButton text={user.Profile?.Name && user.Profile?.Surname ? `${user.Profile?.Name} ${user.Profile?.Surname}` : undefined} src={user.Picture ? user.Picture : user.Email} link={`/user/${user.UserId}`} />
+                      <Link href="/api/auth/logout" prefetch={false} style={{ width: "100%" }}>
+                        <HStack
+                          _hover={{ bg: "brand.100", color: "white", borderRadius: "md" }}
+                          bg={"white"}
+                          color={"brand.100"}
+                          borderRadius={"none"}
+                          padding="10px"
+                          alignItems="center"
+                        >
+                          <Icon as={SlLogout} w={5} h={5} />
+                          <Text
+                            fontWeight={"light"}
+                            lineHeight="1"
+                            letterSpacing="0"
+                          >
+                            Cerrar sesion
+                          </Text>
+                        </HStack>
+                      </Link>
+                    </>
+                    :
+                    <SidebarButton icon={SlLogin} text='Iniciar Sesion' link='/api/auth/login' />
+                }
+              </>
+          }
         </VStack>
 
       </Container>

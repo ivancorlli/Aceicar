@@ -1,6 +1,8 @@
 'use client'
+import IUser from '@/lib/interface/IUser'
+import { withPageAuthRequired } from '@auth0/nextjs-auth0/client'
 import { Box, Container ,Step, StepDescription, StepIcon, StepIndicator, StepNumber, StepSeparator, StepStatus, StepTitle, Stepper, VStack, useSteps } from '@chakra-ui/react'
-import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
+import { redirect } from 'next/navigation'
 import React, { createContext } from 'react'
 
 
@@ -90,7 +92,5 @@ function GuideMobile({index}:{index:number}) {
   )
 }
 
-
-
 export {QuickStartContext}
-export default QuickStartLayout
+export default withPageAuthRequired(QuickStartLayout)

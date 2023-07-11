@@ -7,7 +7,7 @@ public static class Index
 
     public static IEndpointRouteBuilder UserContextEndpoints(this IEndpointRouteBuilder route)
     {
-        route.MapGroup("/user")
+        route.MapGroup("/users")
         .MapPosts()
         .MapGets();
         return route;
@@ -15,14 +15,14 @@ public static class Index
 
     internal static IEndpointRouteBuilder MapPosts(this IEndpointRouteBuilder endpoint)
     {
-        endpoint.MapPost("/new", CreateUser.Execute);
-        endpoint.MapPost("/new-provider",CreateUserProvider.Execute);
-        endpoint.MapPost("/location",ModifyLocation.Execute);
-        endpoint.MapPost("/profile",ModifyProfile.Execute);
-        endpoint.MapPost("/email",ChangeEmail.Execute);
-        endpoint.MapPost("/phone",ChangePhone.Execute);
-        endpoint.MapPost("/username",ChangeUsername.Execute);
-        endpoint.MapPost("/account",ConfigAccount.Execute);
+        endpoint.MapPost("/new", CreateUser.Execute).RequireAuthorization();
+        endpoint.MapPost("/new-provider",CreateUserProvider.Execute).RequireAuthorization();
+        endpoint.MapPatch("/{userId}/location",ModifyLocation.Execute).RequireAuthorization();
+        endpoint.MapPatch("/{userId}/profile",ModifyProfile.Execute).RequireAuthorization();
+        endpoint.MapPatch("/{userId}/email",ChangeEmail.Execute).RequireAuthorization();
+        endpoint.MapPatch("/{userId}/phone",ChangePhone.Execute).RequireAuthorization();
+        endpoint.MapPatch("/{userId}/username",ChangeUsername.Execute).RequireAuthorization();
+        endpoint.MapPatch("/{userId}/account",ConfigAccount.Execute).RequireAuthorization();
         return endpoint;
     }
     internal static IEndpointRouteBuilder MapGets(this IEndpointRouteBuilder endpoint)
