@@ -1,9 +1,11 @@
 using Common.Basis.Interface;
 using Common.Basis.Utils;
+using Common.IntegrationEvents;
 using UserContext.Core.Aggregate;
 using UserContext.Core.Repository;
 using UserContext.Core.Service;
 using UserContext.Core.ValueObject;
+using Common.Basis.ValueObject;
 
 namespace UserContext.Application.Feature.ApplicationUser.Command.ConfigAccount;
 
@@ -24,6 +26,9 @@ public sealed class ConfigAccountHandler
         Result<User> result = await _manager.ConfigAccount(UserId,Username,Phone);
         if (result.IsFailure) return OperationResult.Invalid(result.Error);
         _session.UserRepository.Apply(result.Value);
+        await _session.SaveChangesAsync(cancellationToken);
+        Phone phone = result.Value.Phone!;
+        await _session.UserRepository.Push(new UserPhoneChangedEvent(result.Value.Id,phone.Country,phone.Number));
         return OperationResult.Success();
     }
 }

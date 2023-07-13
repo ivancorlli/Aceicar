@@ -1,8 +1,8 @@
-namespace UserContext.Core.ValueObject;
+namespace Common.Basis.ValueObject;
 
 public record Email
 {
-    public string Value {get;private set;} = default!;
+    public string Value { get; private set; } = default!;
     public static Email Create(string Value)
     {
         Email newEmail = new();

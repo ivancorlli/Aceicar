@@ -5,8 +5,7 @@ using UserContext.Core.Aggregate;
 using UserContext.Core.Event.UserEvent;
 using UserContext.Core.Repository;
 using UserContext.Core.Service;
-using UserContext.Core.ValueObject;
-using Wolverine;
+using Common.Basis.ValueObject;
 
 namespace UserContext.Application.Feature.ApplicationUser.Command.CreateUser;
 
@@ -21,7 +20,6 @@ public sealed class CreateUserHandler
         CreateUserCommand command, 
         IUoW _session, 
         UserManager _manager, 
-        IMessageBus _bus,
         CancellationToken cancellationToken
         )
     {
@@ -34,8 +32,8 @@ public sealed class CreateUserHandler
         {
             User user = newUser.Value;
             _session.UserRepository.Create(user.Id, @event);
-            await _bus.PublishAsync(new UserCreatedEvent(@event.UserId, @event.Email));
             await _session.SaveChangesAsync(cancellationToken);
+            await _session.UserRepository.Push(new UserCreatedEvent(@event.UserId, @event.Email,@event.TimeZone));
             return OperationResult.Success();
         }
         else return OperationResult.Invalid(newUser.Error);

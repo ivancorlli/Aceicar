@@ -1,4 +1,5 @@
 using Common.Basis.Aggregate;
+using Common.Basis.ValueObject;
 using UserContext.Core.Enumerable;
 using UserContext.Core.Event.UserEvent;
 using UserContext.Core.ValueObject;
@@ -34,7 +35,7 @@ public abstract class IUser : IAggregate
 
     internal IUser ChangePhone(Phone phone)
     {
-        PhoneChanged @event = new(Id, phone.PhoneCountry,phone.PhoneNumber);
+        PhoneChanged @event = new(Id, phone.Country,phone.Number);
         Raise(@event);
         Apply(@event);
         return this;
@@ -80,40 +81,40 @@ public abstract class IUser : IAggregate
         return this;
     }
 
-    public void Apply(EmailChanged @event)
+    private void Apply(EmailChanged @event)
     {
         Email = Email.Create(@event.Email);
     }
 
-    public void Apply(PhoneChanged @event)
+    private void Apply(PhoneChanged @event)
     {
         Phone = Phone.Create(@event.PhoneCountry,@event.PhoneNumber);
     }
 
-    public void Apply(ImageChanged @event)
+    private void Apply(ImageChanged @event)
     {
         Image =new ProfileImage(@event.Image);
     }
 
-    public void Apply(UserSuspended @event)
+    private void Apply(UserSuspended @event)
     {
         Status = @event.Status;
     }
-    public void Apply(UsernameChanged @event)
+    private void Apply(UsernameChanged @event)
     {
         Username = Username.Create(@event.Username);
     }
 
-    public void Apply(ProfileModified @event)
+    private void Apply(ProfileModified @event)
     {
         Profile = Profile.Create(@event.Name,@event.Surname,@event.Gender,@event.Birth);
     }
 
-    public void Apply(LocationModified @event)
+    private void Apply(LocationModified @event)
     {
         Location = Location.Create(@event.Country,@event.City,@event.State,@event.PostalCode,@event.Status);
     }
-    public void Apply(TimeZoneModified @event)
+    private void Apply(TimeZoneModified @event)
     {
         TimeZone = TimeZoneInfo.FindSystemTimeZoneById(@event.TimeZone);
     }

@@ -1,3 +1,4 @@
+using Common.Basis.Repository;
 using Marten;
 using NotificationSystem.Core.Aggregate;
 using NotificationSystem.Core.Event.UserEvent;
@@ -10,7 +11,7 @@ public class UserRepository : IUserRepository
     private IDocumentSession _session;
     public UserRepository(IDocumentSession session)
     {
-        _session = session;
+        _session =session;
     }
     public void Apply(User Root)
     {
@@ -39,7 +40,7 @@ public class UserRepository : IUserRepository
         else return null;
     }
 
-    public void Push<T>(T IntegrationEvent)
+    public Task Push<T>(T IntegrationEvent)
     {
         throw new NotImplementedException();
     }

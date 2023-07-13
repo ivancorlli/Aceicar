@@ -3,7 +3,6 @@ using Common.Basis.Utils;
 using UserContext.Core.Aggregate;
 using UserContext.Core.Error;
 using UserContext.Core.Repository;
-using UserContext.Core.ValueObject;
 
 namespace UserContext.Application.Feature.ApplicationUser.Command.SuspendAccount;
 
@@ -24,6 +23,7 @@ public sealed class Index
         if(user == null) return OperationResult.Invalid(new UserNotFound());
         user.SuspendUser();
         _session.UserRepository.Apply(user);
+        await _session.SaveChangesAsync(cancellationToken);
         return OperationResult.Success();
     }
 

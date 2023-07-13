@@ -1,7 +1,7 @@
 using Common.Basis.Error;
 using Common.Basis.Utils;
+using Common.Basis.ValueObject;
 using UserContext.Core.Aggregate;
-using UserContext.Core.Enumerable;
 using UserContext.Core.Error;
 using UserContext.Core.Event.UserEvent;
 using UserContext.Core.Repository;

@@ -1,13 +1,14 @@
 using Marten.Events.Aggregation;
 using UserContext.Application.ViewModel;
 using UserContext.Core.Event.UserEvent;
-using UserContext.Core.ValueObject;
+using Common.Basis.ValueObject;
 
 namespace UserContext.Infrastructure.Projection.UserAccountProjection;
 
 public class UserAccountProjection : SingleStreamProjection<UserAccount>
 {
-    public UserAccountProjection(){}
+    public UserAccountProjection(){
+    }
     public UserAccount Create(UserCreated @event)
     {
         DateTimeOffset time = DateTimeOffset.UtcNow;

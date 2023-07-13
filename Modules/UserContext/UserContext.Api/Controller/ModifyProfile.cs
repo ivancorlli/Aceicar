@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Common.Basis.Interface;
 using Microsoft.AspNetCore.Mvc;
 using UserContext.Api.utils;
@@ -23,12 +22,7 @@ public static class ModifyProfile
         HttpContext context
     )
     {
-        string UserId = string.Empty;
-        ClaimsPrincipal claim = context.User;
-        string? idClaim = claim.FindFirstValue("userId");
-        if (idClaim != null) UserId = idClaim;
-        if (string.IsNullOrEmpty(UserId)) return TypedResults.BadRequest();
-        ModifyProfileCommand command = new(UserId, Body.Name, Body.Surname, Body.Gender, DateTime.Parse(Body.Birth));
+        ModifyProfileCommand command = new(userId, Body.Name, Body.Surname, Body.Gender, DateTime.Parse(Body.Birth));
         IOperationResult result = await Bus.InvokeAsync<IOperationResult>(command);
         return ResultConversor.Convert(result);
     }

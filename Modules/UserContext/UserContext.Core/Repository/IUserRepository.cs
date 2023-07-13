@@ -1,4 +1,5 @@
 using Common.Basis.Repository;
+using Common.Basis.ValueObject;
 using UserContext.Core.Aggregate;
 using UserContext.Core.Event.UserEvent;
 using UserContext.Core.ValueObject;

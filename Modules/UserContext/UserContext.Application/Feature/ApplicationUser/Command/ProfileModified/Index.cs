@@ -1,5 +1,6 @@
 using Common.Basis.Interface;
 using Common.Basis.Utils;
+using Common.IntegrationEvents;
 using UserContext.Core.Aggregate;
 using UserContext.Core.Constant;
 using UserContext.Core.Error;
@@ -25,6 +26,9 @@ public static class ModifyProfileHandler
         if(user == null) return OperationResult.NotFound(new UserNotFound());
         user.ModifyProfile(profile);
         session.UserRepository.Apply(user);
+        await session.SaveChangesAsync(cancellationToken);
+        profile = user.Profile!;
+        await session.UserRepository.Push(new UserProfileChangedEvent(user.Id,profile.Name,profile.Surname,profile.Gender));
         return OperationResult.Success();         
     }
 }

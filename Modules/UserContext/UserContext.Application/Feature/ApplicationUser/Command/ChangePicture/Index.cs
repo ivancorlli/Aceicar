@@ -12,13 +12,16 @@ public static class ChangePictureHandler
 {
     public static async Task<IOperationResult> Handle(
         ChangePictureCommand command,
-        IUoW session
+        IUoW session,
+        CancellationToken cancellationToken
     )
     {
         ProfileImage picture = new ProfileImage(command.Picture);
         User? user = await session.UserRepository.FindById(Guid.Parse(command.UserId));
         if(user == null) return OperationResult.NotFound(new UserNotFound());
         user.ChangeImage(picture);
+        session.UserRepository.Apply(user);
+        await session.SaveChangesAsync(cancellationToken);
         return OperationResult.Success();
     }   
 }

@@ -11,9 +11,9 @@ public abstract class IUser : IAggregate
     public Phone? Phone { get; protected set; } = default!;
     public Profile? Profile { get; protected set; }
 
-    public IUser ChangeEmail(Email email)
+    public IUser ChangeEmail(Email email,string code)
     {
-        EmailChanged @event = new(Id, email.Value);
+        EmailChanged @event = new(Id, email.Value,code);
         Apply(@event);
         Raise(@event);
         return this;
@@ -25,7 +25,7 @@ public abstract class IUser : IAggregate
         Email.Verify(code);
         if (Email.Verified)
         {
-            EmailVerified @event = new(Id, code);
+            EmailVerified @event = new(Id,Email.Value,code);
             Apply(@event);
             Raise(@event);
             return Email.Verified;
@@ -36,9 +36,9 @@ public abstract class IUser : IAggregate
         }
     }
 
-    public IUser ChangePhone(Phone phone)
+    public IUser ChangePhone(Phone phone,string code)
     {
-        PhoneChanged @event = new(Id, phone.Country, phone.Number);
+        PhoneChanged @event = new(Id, phone.Country, phone.Number,code);
         Apply(@event);
         Raise(@event);
         return this;
@@ -51,7 +51,7 @@ public abstract class IUser : IAggregate
             Phone.Verify(code);
             if (Phone.Verified)
             {
-                PhoneVerified @event = new(Id, code);
+                PhoneVerified @event = new(Id,Phone.Number,code);
                 Apply(@event);
                 Raise(@event);
                 return Phone.Verified;
@@ -67,36 +67,48 @@ public abstract class IUser : IAggregate
         }
     }
 
-    public IUser ModifyProfile(Profile profile)
+    public IUser ChangeProfile(Profile profile)
     {
-        ProfileModified @event = new(Id, profile.Name, profile.Surname, profile.Gender, profile.Birth);
+        ProfileChanged @event = new(Id, profile.Name, profile.Surname, profile.Gender);
+        Apply(@event);
+        Raise(@event);
+        return this;
+    }
+
+    public IUser ModifyTimeZone(TimeZoneInfo timeZone)
+    {
+        TimeZoneModified @event = new(Id, timeZone.Id);
         Apply(@event);
         Raise(@event);
         return this;
     }
     private void Apply(EmailChanged @event)
     {
-        Email = Email.Create(@event.Email);
+        Email = Email.Create(@event.Email,@event.VerificationCode);
     }
 
     private void Apply(EmailVerified @event)
     {
-        Email.Verify(@event.Code);
+        Email.Verify(@event.VerificationCode);
     }
 
     private void Apply(PhoneChanged @event)
     {
-        Phone = Phone.Create(@event.Country, @event.Number);
+        Phone = Phone.Create(@event.Country, @event.Number,@event.VerificationCode);
     }
 
     private void Apply(PhoneVerified @event)
     {
-        if (Phone != null) Phone.Verify(@event.Code);
+        if (Phone != null) Phone.Verify(@event.VerificationCodeCode);
     }
 
-    private void Apply(ProfileModified @event)
+    private void Apply(ProfileChanged @event)
     {
-        Profile = Profile.Create(@event.Name,@event.Surname,@event.Gender,@event.Birth);
+        Profile = Profile.Create(@event.Name, @event.Surname, @event.Gender);
+    }
+    private void Apply(TimeZoneModified @event)
+    {
+       TimeZone = TimeZoneInfo.FindSystemTimeZoneById(@event.TimeZone);
     }
 
 }

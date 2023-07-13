@@ -1,4 +1,5 @@
 using Common.Basis.Error;
+using Common.Basis.ValueObject;
 using UserContext.Core.ValueObject;
 
 namespace UserContext.Core.Error;
@@ -19,7 +20,7 @@ public record EmailAlreadyUsed : DomainError
 }
 public record PhoneAlreadyUsed : DomainError
 {
-    public PhoneAlreadyUsed(Phone phone) : base(ErrorTypes.TypeBuilder(nameof(UserContext),nameof(PhoneAlreadyUsed)), $"Phone {phone.PhoneNumber} already used"){}
+    public PhoneAlreadyUsed(Phone phone) : base(ErrorTypes.TypeBuilder(nameof(UserContext),nameof(PhoneAlreadyUsed)), $"Phone {phone.Number} already used"){}
 }
 public record UsernameAlreadyUsed : DomainError
 {

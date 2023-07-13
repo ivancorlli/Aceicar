@@ -7,7 +7,7 @@ using UserContext.Core.Aggregate;
 using UserContext.Core.Event.UserEvent;
 using UserContext.Core.Repository;
 using UserContext.Core.Service;
-using UserContext.Core.ValueObject;
+using Common.Basis.ValueObject;
 
 namespace UserContext.Application.Feature.ApplicationUser.Command.CreateUserWithProvider;
 
@@ -37,7 +37,8 @@ public sealed class CreateUserWithProviderHandler
         Result<User> newUser = await manager.CreateUser(@event);
         if (newUser.IsFailure) return OperationResult<Guid>.Invalid(newUser.Error);
         session.UserRepository.Create(@event.UserId,@event);
-        session.UserRepository.Push(new UserCreatedEvent(@event.UserId,@event.Email));
+        await session.SaveChangesAsync(cancellationToken);
+        await session.UserRepository.Push(new UserCreatedEvent(@event.UserId,@event.Email,@event.TimeZone));
         return OperationResult<Guid>.Success(userId);
     }
 

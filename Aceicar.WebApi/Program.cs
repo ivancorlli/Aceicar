@@ -1,5 +1,3 @@
-using Aceicar.WebApi.Extension;
-using Aceicar.WebApi.Router;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Oakton;
 
@@ -8,8 +6,6 @@ var _builder = WebApplication.CreateBuilder(args);
 _builder.Host.ApplyOaktonExtensions();
 
 IServiceCollection services = _builder.Services;
-
-// Install Marten
 services.InstallMarten(_builder.Configuration);
 // Install Wolverine
 services.InstallWolverine(_builder.Host, _builder.Configuration,_builder.Environment);

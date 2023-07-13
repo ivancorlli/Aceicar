@@ -15,19 +15,20 @@ public static class Index
 
     internal static IEndpointRouteBuilder MapPosts(this IEndpointRouteBuilder endpoint)
     {
-        endpoint.MapPost("/new", CreateUser.Execute).RequireAuthorization();
-        endpoint.MapPost("/new-provider",CreateUserProvider.Execute).RequireAuthorization();
-        endpoint.MapPatch("/{userId}/location",ModifyLocation.Execute).RequireAuthorization();
-        endpoint.MapPatch("/{userId}/profile",ModifyProfile.Execute).RequireAuthorization();
-        endpoint.MapPatch("/{userId}/email",ChangeEmail.Execute).RequireAuthorization();
-        endpoint.MapPatch("/{userId}/phone",ChangePhone.Execute).RequireAuthorization();
-        endpoint.MapPatch("/{userId}/username",ChangeUsername.Execute).RequireAuthorization();
-        endpoint.MapPatch("/{userId}/account",ConfigAccount.Execute).RequireAuthorization();
+        endpoint.MapPost("/new", CreateUser.Execute);
+        endpoint.MapPost("/new-provider",CreateUserProvider.Execute);
+        endpoint.MapPatch("/{userId}/location",ModifyLocation.Execute);
+        endpoint.MapPatch("/{userId}/profile",ModifyProfile.Execute);
+        endpoint.MapPatch("/{userId}/email",ChangeEmail.Execute);
+        endpoint.MapPatch("/{userId}/phone",ChangePhone.Execute);
+        endpoint.MapPatch("/{userId}/username",ChangeUsername.Execute);
+        endpoint.MapPatch("/{userId}/account",ConfigAccount.Execute);
+        endpoint.MapPatch("/{userId}/account",ModifyTimeZone.Execute);
         return endpoint;
     }
     internal static IEndpointRouteBuilder MapGets(this IEndpointRouteBuilder endpoint)
     {
-        endpoint.MapGet("/me",GetMe.Execute).RequireAuthorization();
+        endpoint.MapGet("/me",GetMe.Execute);
         return endpoint;
     }
 }

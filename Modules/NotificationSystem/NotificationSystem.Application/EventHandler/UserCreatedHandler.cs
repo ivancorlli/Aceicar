@@ -7,14 +7,16 @@ namespace NotificationSystem.Application.EventHandler;
 
 public static class UserCreatedHandler
 {
-    public static void Handle(
+    public static async void Handle(
         UserCreatedEvent command,
-        IUoW session
+        IUoW session,
+        CancellationToken cancellationToken
         )
     {
-        UserCreated @event = new(command.UserId,command.Email);
+        UserCreated @event = new(command.UserId,command.Email,command.TimeZone);
         User user = new(@event);
         session.UserRepository.Create(user.Id,@event);
+        await session.SaveChangesAsync(cancellationToken);
     }
     
 }

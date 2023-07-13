@@ -1,39 +1,28 @@
 using Marten;
+using Microsoft.Extensions.Configuration;
 using UserContext.Core.Repository;
+using UserContext.Infrastructure.Data;
+using Wolverine;
 
 namespace UserContext.Infrastructure.Repository;
 
 public class UnitOfWork : IUoW
 {
-    private IDocumentSession Session;
+    private IDocumentSession session;
     public IUserRepository UserRepository { get; private set; }
 
     public UnitOfWork(
-        IUserRepository userRepo,
-        IDocumentSession session
-        )
+        IConfiguration configuration,
+        IUserStore store,
+        IMessageBus bus
+    )
     {
-        Session = session;
-        UserRepository = userRepo;
-    }
-
-    public void AuditableEntity()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Dispose()
-    {
-       Session.Dispose(); 
-    }
-
-    public void OutboxMessage()
-    {
-        throw new NotImplementedException();
+        session = store.LightweightSession();
+        UserRepository = new UserRepository(session,store,bus);
     }
 
     public async Task SaveChangesAsync(CancellationToken cancellationToken)
     {
-        await Session.SaveChangesAsync(cancellationToken);
+        await session.SaveChangesAsync(cancellationToken);
     }
 }

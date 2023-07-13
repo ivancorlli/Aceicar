@@ -6,6 +6,7 @@
     <ProjectReference Include="..\Modules\NotificationSystem\NotificationSystem.Infrastructure\NotificationSystem.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\UserContext\UserContext.Infrastructure\UserContext.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\UserContext\UserContext.Api\UserContext.Api.csproj" />
+    <ProjectReference Include="..\Modules\CompanyContext\CompanyContext.Infrastructure\CompanyContext.Infrastructure.csproj" />
   </ItemGroup>
 
 

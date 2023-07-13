@@ -1,5 +1,7 @@
 using Marten;
+using Microsoft.Extensions.Configuration;
 using NotificationSystem.Core.Repository;
+using NotificationSystem.Infrastructure.Data;
 
 namespace NotificationSystem.Infrastructure.Repository;
 
@@ -10,26 +12,12 @@ public class UnitOfWork : IUoW
 
     public UnitOfWork(
         IUserRepository userRepo,
-        IDocumentSession session
+        IConfiguration configuration,
+        INotficiationSystem store
         )
     {
-        Session = session;
-        UserRepository = userRepo;
-    }
-
-    public void AuditableEntity()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Dispose()
-    {
-       Session.Dispose(); 
-    }
-
-    public void OutboxMessage()
-    {
-        throw new NotImplementedException();
+        Session = store.LightweightSession();
+        UserRepository = new UserRepository(Session);
     }
 
     public async Task SaveChangesAsync(CancellationToken cancellationToken)

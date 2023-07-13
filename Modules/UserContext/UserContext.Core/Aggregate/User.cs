@@ -1,6 +1,6 @@
 using UserContext.Core.Abstraction;
 using UserContext.Core.Event.UserEvent;
-using UserContext.Core.ValueObject;
+using Common.Basis.ValueObject;
 
 namespace UserContext.Core.Aggregate;
 

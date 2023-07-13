@@ -23,6 +23,7 @@ public static class ModifyLocationHandler
         if(user == null) return OperationResult.NotFound(new UserNotFound());
         user.ModifyLocation(location);
         session.UserRepository.Apply(user);
+        await session.SaveChangesAsync(cancellationToken);
         return OperationResult.Success();
     }
 }

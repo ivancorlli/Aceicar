@@ -8,6 +8,8 @@ public record Location
     public string City { get; private set; } = default!;
     public string State { get; private set; } = default!;
     public string PostalCode { get; private set; } = default!;
+    public string? Steet {get;private set;} = default!;
+    public int? StreetNumber {get; private set;} =default!;
     public LocationStatus Status { get; private set; }
     private Location() { }
     public static Location Create(

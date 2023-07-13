@@ -10,5 +10,6 @@ public class User : IUser
     {
         Id = @event.Userid;
         this.Email = Email.CreateWithVerify(@event.Email);
+        this.TimeZone = TimeZoneInfo.FindSystemTimeZoneById(@event.TimeZone);
     }
 }

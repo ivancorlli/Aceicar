@@ -3,9 +3,6 @@ using Wolverine;
 using Wolverine.EntityFrameworkCore;
 using Wolverine.Postgresql;
 
-
-namespace Aceicar.WebApi.Extension;
-
 public static class WolverineExtension
 {
 

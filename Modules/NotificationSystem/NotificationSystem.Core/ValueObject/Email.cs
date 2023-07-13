@@ -6,10 +6,11 @@ public record Email
     public bool Verified {get;protected set;} = false;
     public string? VerificationCode {get;protected set;} = default!;
     public DateTime? VerifiedAt {get;protected set;} = default!;
-    public static Email Create(string Value)
+    public static Email Create(string Value,string? code = "")
     {
         Email newEmail = new();
         newEmail.Value = Value.Trim().ToLower();
+        if(!string.IsNullOrEmpty(code)) newEmail.VerificationCode = code;
         return newEmail;
     }
 
@@ -31,6 +32,8 @@ public record Email
         if(code == VerificationCode)
         {
             Verified = true;
+            VerificationCode = null;
+            VerifiedAt = DateTime.Now;
         }else {
             Verified = false;
         }
