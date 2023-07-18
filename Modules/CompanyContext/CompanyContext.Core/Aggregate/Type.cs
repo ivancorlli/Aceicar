@@ -1,19 +1,19 @@
 using Common.Basis.Utils;
+using CompanyContext.Core.Entity;
 using CompanyContext.Core.Enumerable;
-using CompanyContext.Core.ValueObject;
 
 namespace CompanyContext.Core.Aggregate;
 
-public sealed class CompanyType
+public sealed class Type
 {
     public Guid Id { get; private set; }
     public string Name { get; private set; } = default!;
     public TypeStatus Status { get; private set; }
-    public string? TypeIcon {get; private set;}
+    public string? TypeIcon { get; private set; }
     private IList<Specialization> _specializations = new List<Specialization>();
-    public IEnumerable<Specialization> Specializations => _specializations.AsReadOnly();
+    public IEnumerable<Specialization> Specializations => _specializations;
 
-    internal CompanyType(string name)
+    internal Type(string name)
     {
         Name = name.ToLower().Trim();
         Status = TypeStatus.Active;
@@ -38,17 +38,18 @@ public sealed class CompanyType
     /// Add specialization to type 
     /// </summary>
     /// <param name="name"></param>
-    public Result AddSpecialization(string name)
+    public Result<Specialization> AddSpecialization(string name)
     {
         IList<Specialization> exist = _specializations.Where(x => x.Name == name.Trim().ToLower()).ToList();
         if (exist.Count <= 0)
         {
-        Result<Specialization> specialization = Specialization.Create(Id, name);
-   
-        if (specialization.IsFailure) return Result.Fail(specialization.Error);
+            Result<Specialization> specialization = Specialization.Create(name);
+
+            if (specialization.IsFailure) return Result.Fail<Specialization>(specialization.Error);
             _specializations.Add(specialization.Value);
+            return Result.Ok<Specialization>(specialization.Value);
         }
-        return Result.Ok();
+        return Result.Ok<Specialization>(exist.First());
     }
 
 }

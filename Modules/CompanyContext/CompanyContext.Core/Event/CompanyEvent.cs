@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CompanyContext.Core.Service
+namespace CompanyContext.Core.Event
 {
-    public class ProductManager
+    public class CompanyEvent
     {
         
     }

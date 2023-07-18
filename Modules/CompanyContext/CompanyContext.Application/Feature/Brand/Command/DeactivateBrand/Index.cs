@@ -1,6 +1,5 @@
 using Common.Basis.Interface;
 using Common.Basis.Utils;
-using CompanyContext.Core.Aggregate;
 using CompanyContext.Core.Error;
 using CompanyContext.Core.Repository;
 
@@ -11,13 +10,14 @@ public static class DeactivateBrandHandler
 {
     public static async Task<IOperationResult> Handle(
         DeactivateBrandCommand command,
-        IEfWork session,
+        IUoW session,
         CancellationToken cancellationToken
     )
     {
-        ProductBrand? brand = await session.BrandRepository.GetById(command.BrandId);
+        CompanyContext.Core.Aggregate.Brand? brand = await session.BrandRepository.FindById(command.BrandId);
         if(brand == null) return OperationResult.NotFound(new BrandNotFound());
         brand.Deactivate();
+        session.BrandRepository.Apply(brand);
         await session.SaveChangesAsync(cancellationToken);
         return OperationResult.Success();
     }

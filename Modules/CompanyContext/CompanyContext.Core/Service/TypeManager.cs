@@ -1,6 +1,5 @@
 
 using Common.Basis.Utils;
-using CompanyContext.Core.Aggregate;
 using CompanyContext.Core.Error;
 using CompanyContext.Core.Repository;
 
@@ -8,18 +7,18 @@ namespace CompanyContext.Core.Service;
 
 public sealed class TypeManager
 {
-    private ICompanyTypeRepository companyTypeRepo;
-    public TypeManager(ICompanyTypeRepository company)
+    private ITypeRepository companyTypeRepo;
+    public TypeManager(ITypeRepository company)
     {
         companyTypeRepo = company;
     }
 
-    public async Task<Result<CompanyType>> Create(string name)
+    public async Task<Result<Aggregate.Type>> Create(string name)
     {
         bool isUsed = await companyTypeRepo.IsNameUsed(name);
-        if(isUsed) return Result.Fail<CompanyType>(new CompanyTypeExists());
-        CompanyType type = new CompanyType(name);
-        return Result.Ok<CompanyType>(type);
+        if(isUsed) return Result.Fail<Aggregate.Type>(new TypeExists());
+        Aggregate.Type type = new Aggregate.Type(name);
+        return Result.Ok<Aggregate.Type>(type);
     }
     
 }

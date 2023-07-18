@@ -2,19 +2,13 @@ using CompanyContext.Core.Interface;
 
 namespace CompanyContext.Core.ValueObject;
 
-public sealed record CompanyArea : IArea<CompanyArea>
+public sealed record CompanyArea : IArea
 {
-    public Guid TypeId {get;private set;} = default!;
-
-    public Guid? SpecializationId {get;private set;} = default!;
-
-    public static CompanyArea InSpecialization(Guid typeId, Guid specializationId)
+    public CompanyArea(Guid typeId) : base(typeId)
     {
-        return new CompanyArea() { TypeId = typeId, SpecializationId =specializationId};
     }
 
-    public static CompanyArea InType(Guid typeId)
+    public CompanyArea(Guid typeId, Guid specializationId) : base(typeId, specializationId)
     {
-        return new CompanyArea() { TypeId = typeId};
     }
 }

@@ -1,6 +1,6 @@
 using Common.Basis.Interface;
 using Common.Basis.Utils;
-using CompanyContext.Core.Aggregate;
+using CompanyContext.Core.Entity;
 using CompanyContext.Core.Error;
 using CompanyContext.Core.Repository;
 
@@ -15,10 +15,11 @@ public static class CreateSpecializationHandler
         CancellationToken token
     )   
     {
-        CompanyType? type = await session.CompanyTypeRepository.GetById(command.TypeId);
-        if(type == null) return OperationResult.NotFound(new CompanyTypeNotFound());
-        Result result = type.AddSpecialization(command.Name);
+        Core.Aggregate.Type? type = await session.TypeRepository.GetById(command.TypeId);
+        if(type == null) return OperationResult.NotFound(new TypeNotFound());
+        Result<Specialization> result = type.AddSpecialization(command.Name);
         if(result.IsFailure) return OperationResult.Invalid(result.Error);
+        session.TypeRepository.Update(result.Value);
         await session.SaveChangesAsync(token);
         return OperationResult.Success();
     }

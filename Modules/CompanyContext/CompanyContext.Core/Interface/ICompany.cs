@@ -4,7 +4,7 @@ using CompanyContext.Core.Entity;
 using CompanyContext.Core.Enumerable;
 using CompanyContext.Core.ValueObject;
 
-namespace CompanyContext.Core.Abstraction;
+namespace CompanyContext.Core.Interface;
 
 public abstract class ICompany:IAggregate
 {
@@ -20,6 +20,5 @@ public abstract class ICompany:IAggregate
     public DateTime? PublishedAt {get;protected set;} = default!;
     private IList<CompanyArea> _areas = new List<CompanyArea>();
     private IList<Employee> _employees = new List<Employee>();
-    public IEnumerable<CompanyArea> Areas => _areas.AsReadOnly();
     public IEnumerable<Employee> Employees => _employees.AsReadOnly();
 }

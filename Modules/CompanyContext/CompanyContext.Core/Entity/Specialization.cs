@@ -1,20 +1,18 @@
 using Common.Basis.Utils;
 using CompanyContext.Core.Enumerable;
 
-namespace CompanyContext.Core.ValueObject;
+namespace CompanyContext.Core.Entity;
 
 public sealed class Specialization
 {
-    public  Guid TypeId {get; private set;} = default!;
     public Guid Id {get;private set;} = default!;
     public string Name {get;private set;} = default!;
-    
+    public string? SpecializationIcon {get; private set;} = default!;
     public TypeStatus Status {get; private set;} = default!;
     private Specialization() {}
-    internal static Result<Specialization> Create(Guid typeId,string name)
+    internal static Result<Specialization> Create(string name)
     {
         Specialization specification = new();
-        specification.TypeId = typeId;
         specification.Id = Guid.NewGuid();
         specification.Name = name.ToLower().Trim();
         

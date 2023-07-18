@@ -1,6 +1,5 @@
 using Common.Basis.Interface;
 using Common.Basis.Utils;
-using CompanyContext.Core.Aggregate;
 using CompanyContext.Core.Repository;
 using CompanyContext.Core.Service;
 
@@ -16,13 +15,13 @@ public static class CreateTypeHandler
         CancellationToken cancellationToken
     )
     {
-        Result<CompanyType> type = await manager.Create(command.Name);
+        Result<Core.Aggregate.Type> type = await manager.Create(command.Name);
         if(type.IsFailure) return OperationResult.Invalid(type.Error);
         if(command.Icon != null)
         {
             type.Value.ChangeIcon(command.Icon);
         }
-        session.CompanyTypeRepository.Create(type.Value);
+        session.TypeRepository.Update(type.Value);
         await session.SaveChangesAsync(cancellationToken);
         return OperationResult.Success();
     }

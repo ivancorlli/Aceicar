@@ -1,4 +1,5 @@
 using UserContext.Api.Routes;
+using CompanyContext.Api.Routes;
 
 
 public static class Index
@@ -7,7 +8,8 @@ public static class Index
     {
         router.MapGroup("/api")
         .RequireAuthorization()
-        .UserContextEndpoints();
+        .UserContextEndpoints()
+        .CompanyContextEndpoints();
         return router;
     }
     

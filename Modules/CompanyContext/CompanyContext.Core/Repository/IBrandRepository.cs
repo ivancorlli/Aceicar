@@ -1,11 +1,12 @@
+using Common.Basis.Repository;
 using CompanyContext.Core.Aggregate;
+using CompanyContext.Core.Event;
 
 namespace CompanyContext.Core.Repository;
 
-public interface IBrandRepository
+public interface IBrandRepository : IRepository<Brand>
 {
     Task<bool> IsNameUsed(string Name);
-    Task<ProductBrand?> GetById(Guid BrandId);
-    void Create(ProductBrand Root);
-    
+    void Create(Guid RootId, BrandCreated @event);
+    void Create(Guid RootId, BrandForCompanyCreated @event);
 }

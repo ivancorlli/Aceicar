@@ -1,4 +1,5 @@
-using CompanyContext.Core.Abstraction;
+
+using CompanyContext.Core.Interface;
 
 namespace CompanyContext.Core.Aggregate;
 

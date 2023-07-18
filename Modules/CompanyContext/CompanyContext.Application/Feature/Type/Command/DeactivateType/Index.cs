@@ -1,6 +1,5 @@
 using Common.Basis.Interface;
 using Common.Basis.Utils;
-using CompanyContext.Core.Aggregate;
 using CompanyContext.Core.Error;
 using CompanyContext.Core.Repository;
 
@@ -15,8 +14,8 @@ public static class DeactivateTypeHandler
         CancellationToken token
     )
     {
-        CompanyType? companyType = await session.CompanyTypeRepository.GetById(command.TypeId);
-        if(companyType == null) return OperationResult.NotFound(new CompanyTypeNotFound());
+        Core.Aggregate.Type? companyType = await session.TypeRepository.GetById(command.TypeId);
+        if(companyType == null) return OperationResult.NotFound(new TypeNotFound());
         companyType.Deactivate();
         await session.SaveChangesAsync(token);
         return OperationResult.Success();
