@@ -67,7 +67,7 @@ public abstract class IUser : IAggregate
 
     public IUser ModifyLocation(Location location)
     {
-        LocationModified @event = new(Id,location.Country,location.City,location.State,location.PostalCode,location.Status);
+        LocationModified @event = new(Id,location.Country,location.City,location.State,location.PostalCode,location.Steet,location.StreetNumber);
         Raise(@event);
         Apply(@event);
         return this;
@@ -112,7 +112,12 @@ public abstract class IUser : IAggregate
 
     private void Apply(LocationModified @event)
     {
-        Location = Location.Create(@event.Country,@event.City,@event.State,@event.PostalCode,@event.Status);
+        if(@event.Street != null && @event.StreetNumber != null)
+        {
+            Location = Location.Create(@event.Country,@event.City,@event.State,@event.PostalCode,@event.Street,@event.StreetNumber);
+        }else {
+            Location = Location.Create(@event.Country,@event.City,@event.State,@event.PostalCode);
+        }
     }
     private void Apply(TimeZoneModified @event)
     {

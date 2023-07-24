@@ -17,7 +17,7 @@ public static class CreateCategoryHandler
     {
         Result<CompanyContext.Core.Aggregate.Category> result = await manager.Create(command.Name);
         if(result.IsFailure) return OperationResult.NotFound(result.Error);
-        session.CategoryRespository.Update(result.Value);
+        session.CategoryRespository.CreateAsync(result.Value);
         await session.SaveChangesAsync(cancellationToken);
         return OperationResult.Success();
     }

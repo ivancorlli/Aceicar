@@ -3,8 +3,8 @@ import GenderButton from '@/component/Button/GenderButton'
 import UserProfileHorizontal from '@/component/Card/UserProfileHorizontal'
 import { usePostProfile } from '@/hook/myAccount'
 import { UserGender } from '@/lib/enum/UserGender'
-import IUser from '@/lib/interface/IUser'
-import { Button, Container, HStack, Heading, Input, VStack } from '@chakra-ui/react'
+import IUser from '@/lib/interface/IMyAccount'
+import { Button, Container, Heading, Input, VStack } from '@chakra-ui/react'
 import { redirect, useRouter } from 'next/navigation'
 import React, { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react'
 
@@ -12,32 +12,34 @@ interface ProfileForm {
   name: string,
   surname: string,
   birth: string,
-  gender: string
+  gender: string,
+  userId:string
 }
 
 const ProfileConfiguration = ({ user }: { user: IUser | null }) => {
   const {isLoading,post} = usePostProfile()
   if(user != null)
   {
-      if(user.Profile != undefined)
+      if(user.profile != undefined)
       {
         return redirect("/quickstart?num=2")
       }
   }
-  const [form, setForm] = useState<ProfileForm>({ name: "", surname: "", birth: "", gender: "" })
+  const [form, setForm] = useState<ProfileForm>({ name: "", surname: "", birth: "", gender: "",userId:user?.userId ?? "" })
   const [gender, setGender] = useState("")
   const router = useRouter()
 
 
   useEffect(() => {
     if (user != null) {
-      if (user.Profile) {
+      if (user.profile) {
         setForm(
           {
-            name: user.Profile?.Name,
-            surname: user.Profile?.Surname,
-            birth: user.Profile.Birth,
-            gender: user.Profile.Gender
+            name: user.profile?.name,
+            surname: user.profile?.surname,
+            birth: user.profile.birth,
+            gender: user.profile.gender,
+            userId: user.userId
           }
         )
       }
@@ -47,8 +49,8 @@ const ProfileConfiguration = ({ user }: { user: IUser | null }) => {
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    post(form,()=>router.push("/quickstart?num=2"))
-
+    post(form)
+    router.push("/quickstart?num=2")
   }
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
@@ -83,7 +85,7 @@ const ProfileConfiguration = ({ user }: { user: IUser | null }) => {
         Completa tu perfil
       </Heading>
       <VStack w="100%">
-        <UserProfileHorizontal form={form} src={user?.Picture ?? undefined} />
+        <UserProfileHorizontal form={form} src={user?.picture ?? undefined} />
         <VStack w="100%">
           <Container w={["100%", "80%", "50%"]}>
             <form onSubmit={(e) => handleSubmit(e)} style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "2rem" }}>

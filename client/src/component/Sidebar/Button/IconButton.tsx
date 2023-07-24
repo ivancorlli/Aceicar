@@ -21,7 +21,7 @@ const IconButton = (props: Props) => {
                 >
                     <Box
                         _hover={{ bg: "brand.100", color: "white", borderRadius: "md" }}
-                        bg={params == props.link ? "brand.100" : "white"}
+                        bg={params == props.link ? "brand.100" : "brand.200"}
                         color={params == props.link ? "white" : "brand.100"}
                         borderRadius={params == props.link ? "md" : "none"}
                         padding="7px"

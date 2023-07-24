@@ -6,9 +6,10 @@ public static class CategoryRouter
 {
     internal static IEndpointRouteBuilder CategoryEndpoints(this IEndpointRouteBuilder route)
     {
-        route.MapGroup("/category")
+        route.MapGroup("/categories")
         .CategoryPost()
-        .CategoryGet();
+        .CategoryGet()
+        .CategoryPatch();
         return route;
     }
 
@@ -20,6 +21,9 @@ public static class CategoryRouter
     }
     private static IEndpointRouteBuilder CategoryGet(this IEndpointRouteBuilder endpoint)
     {
+        endpoint.MapGet("/",AllCategories.Execute);
+        endpoint.MapGet("/subcategories",AllSubCategories.Execute);
+        endpoint.MapGet("/{categoryId}/subcategories",SubcategoriesByCategory.Execute);
         return endpoint;
     }
 

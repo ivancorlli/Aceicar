@@ -13,16 +13,16 @@ async function handler(req:NextApiRequest,res:NextApiResponse)
     {
         try{
             const data = await axios({
-                url:"http://localhost:5000/api/user/account",
-                method:"POST",
+                url:`${process.env.API_URL}/users/${req.body.userId}/account`,
+                method:"PATCH",
                 headers:{
                     Accept:"application/json",
                     Authorization:`Bearer ${session.accessToken}`
                 },
                 data:{
-                   username:req.body.username,
-                   phoneCountry:req.body.phoneCountry,
-                   phoneNumber:req.body.phoneNumber
+                    username:req.body.username,
+                    phoneCountry:req.body.phoneCountry,
+                    phoneNumber:req.body.phoneNumber
                 }
             })
             if(data.status == 200)

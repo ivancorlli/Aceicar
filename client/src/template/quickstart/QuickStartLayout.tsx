@@ -1,5 +1,5 @@
 'use client'
-import IUser from '@/lib/interface/IUser'
+import IUser from '@/lib/interface/IMyAccount'
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client'
 import { Box, Container ,Step, StepDescription, StepIcon, StepIndicator, StepNumber, StepSeparator, StepStatus, StepTitle, Stepper, VStack, useSteps } from '@chakra-ui/react'
 import { redirect } from 'next/navigation'

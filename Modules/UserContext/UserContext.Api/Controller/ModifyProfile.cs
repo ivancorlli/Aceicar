@@ -1,7 +1,7 @@
 using Common.Basis.Interface;
 using Microsoft.AspNetCore.Mvc;
 using UserContext.Api.utils;
-using UserContext.Application.Feature.ApplicationUser.Command.ProfileModified;
+using UserContext.Application.Feature.User.Command.ProfileModified;
 using Wolverine;
 
 namespace UserContext.Api.Controller;
@@ -16,7 +16,7 @@ public sealed record ModifyProfileRequest(
 public static class ModifyProfile
 {
     public static async Task<Microsoft.AspNetCore.Http.IResult> Execute(
-        [FromRoute] string userId,
+        [FromRoute] Guid userId,
         [FromBody] ModifyProfileRequest Body,
         IMessageBus Bus,
         HttpContext context

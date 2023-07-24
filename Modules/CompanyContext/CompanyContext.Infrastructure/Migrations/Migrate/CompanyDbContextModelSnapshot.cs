@@ -38,10 +38,52 @@ namespace CompanyContext.Infrastructure.Migrations.Migrate
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name");
+
                     b.ToTable("Category");
                 });
 
-            modelBuilder.Entity("CompanyContext.Core.Aggregate.CompanyType", b =>
+            modelBuilder.Entity("CompanyContext.Core.Aggregate.Role", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("VARCHAR");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Role");
+                });
+
+            modelBuilder.Entity("CompanyContext.Core.Aggregate.Service", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("VARCHAR");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name");
+
+                    b.ToTable("Service");
+                });
+
+            modelBuilder.Entity("CompanyContext.Core.Aggregate.Type", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -61,35 +103,15 @@ namespace CompanyContext.Infrastructure.Migrations.Migrate
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name");
+
                     b.ToTable("Type");
-                });
-
-            modelBuilder.Entity("CompanyContext.Core.Aggregate.Service", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("VARCHAR");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Service");
                 });
 
             modelBuilder.Entity("CompanyContext.Core.Entity.Specialization", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("CompanyTypeId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Name")
@@ -104,9 +126,12 @@ namespace CompanyContext.Infrastructure.Migrations.Migrate
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("TypeId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyTypeId");
+                    b.HasIndex("TypeId");
 
                     b.ToTable("Specialization");
                 });
@@ -143,9 +168,6 @@ namespace CompanyContext.Infrastructure.Migrations.Migrate
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid?>("CategoryId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasColumnType("text");
@@ -161,8 +183,6 @@ namespace CompanyContext.Infrastructure.Migrations.Migrate
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.HasIndex("ServiceId");
 
                     b.HasIndex("SpecializationId");
@@ -176,13 +196,6 @@ namespace CompanyContext.Infrastructure.Migrations.Migrate
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("CompanyContext.Core.ValueObject.CategoryArea", b =>
-                {
-                    b.HasBaseType("CompanyContext.Core.Interface.IArea");
-
-                    b.HasDiscriminator().HasValue("CategoryArea");
-                });
-
             modelBuilder.Entity("CompanyContext.Core.ValueObject.ServiceArea", b =>
                 {
                     b.HasBaseType("CompanyContext.Core.Interface.IArea");
@@ -190,9 +203,39 @@ namespace CompanyContext.Infrastructure.Migrations.Migrate
                     b.HasDiscriminator().HasValue("ServiceArea");
                 });
 
+            modelBuilder.Entity("CompanyContext.Core.Aggregate.Category", b =>
+                {
+                    b.OwnsMany("CompanyContext.Core.ValueObject.CategoryArea", "Areas", b1 =>
+                        {
+                            b1.Property<Guid>("CategoryId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+
+                            b1.Property<Guid?>("SpecializationId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<Guid>("TypeId")
+                                .HasColumnType("uuid");
+
+                            b1.HasKey("CategoryId", "Id");
+
+                            b1.ToTable("CategoryArea");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CategoryId");
+                        });
+
+                    b.Navigation("Areas");
+                });
+
             modelBuilder.Entity("CompanyContext.Core.Aggregate.Service", b =>
                 {
-                    b.OwnsMany("CompanyContext.Core.ValueObject.Requirement", "Requires", b1 =>
+                    b.OwnsMany("CompanyContext.Core.ValueObject.Requirement", "Requirments", b1 =>
                         {
                             b1.Property<Guid>("ServiceId")
                                 .HasColumnType("uuid");
@@ -231,14 +274,14 @@ namespace CompanyContext.Infrastructure.Migrations.Migrate
                                 .HasForeignKey("SubCategoryId");
                         });
 
-                    b.Navigation("Requires");
+                    b.Navigation("Requirments");
                 });
 
             modelBuilder.Entity("CompanyContext.Core.Entity.Specialization", b =>
                 {
-                    b.HasOne("CompanyContext.Core.Aggregate.CompanyType", null)
+                    b.HasOne("CompanyContext.Core.Aggregate.Type", null)
                         .WithMany("Specializations")
-                        .HasForeignKey("CompanyTypeId");
+                        .HasForeignKey("TypeId");
                 });
 
             modelBuilder.Entity("CompanyContext.Core.Entity.SubCategory", b =>
@@ -250,10 +293,6 @@ namespace CompanyContext.Infrastructure.Migrations.Migrate
 
             modelBuilder.Entity("CompanyContext.Core.Interface.IArea", b =>
                 {
-                    b.HasOne("CompanyContext.Core.Aggregate.Category", null)
-                        .WithMany("Areas")
-                        .HasForeignKey("CategoryId");
-
                     b.HasOne("CompanyContext.Core.Aggregate.Service", null)
                         .WithMany("Areas")
                         .HasForeignKey("ServiceId");
@@ -262,7 +301,7 @@ namespace CompanyContext.Infrastructure.Migrations.Migrate
                         .WithMany()
                         .HasForeignKey("SpecializationId");
 
-                    b.HasOne("CompanyContext.Core.Aggregate.CompanyType", null)
+                    b.HasOne("CompanyContext.Core.Aggregate.Type", null)
                         .WithMany()
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -271,19 +310,17 @@ namespace CompanyContext.Infrastructure.Migrations.Migrate
 
             modelBuilder.Entity("CompanyContext.Core.Aggregate.Category", b =>
                 {
-                    b.Navigation("Areas");
-
                     b.Navigation("SubCategories");
-                });
-
-            modelBuilder.Entity("CompanyContext.Core.Aggregate.CompanyType", b =>
-                {
-                    b.Navigation("Specializations");
                 });
 
             modelBuilder.Entity("CompanyContext.Core.Aggregate.Service", b =>
                 {
                     b.Navigation("Areas");
+                });
+
+            modelBuilder.Entity("CompanyContext.Core.Aggregate.Type", b =>
+                {
+                    b.Navigation("Specializations");
                 });
 #pragma warning restore 612, 618
         }

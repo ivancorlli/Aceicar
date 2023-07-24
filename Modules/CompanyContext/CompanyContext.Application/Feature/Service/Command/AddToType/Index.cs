@@ -14,7 +14,7 @@ public static class AddServiceToTypeHandler
         CancellationToken cancellationToken
     )
     {
-        CompanyContext.Core.Aggregate.Service? service = await session.ServiceRepository.GetById(command.ServiceId);
+        CompanyContext.Core.Aggregate.Service? service = await session.ServiceRepository.FindById(command.ServiceId);
         if(service == null) return OperationResult.NotFound(new ServiceNotFound());
         service.AddToType(command.TypeId);
         session.ServiceRepository.Update(service);

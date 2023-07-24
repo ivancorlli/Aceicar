@@ -14,7 +14,7 @@ public static class AddServiceToSpecializationHandler
         CancellationToken cancellationToken
     )
     {
-        CompanyContext.Core.Aggregate.Service? service = await session.ServiceRepository.GetById(command.ServiceId);
+        CompanyContext.Core.Aggregate.Service? service = await session.ServiceRepository.FindById(command.ServiceId);
         if(service == null) return OperationResult.NotFound(new ServiceNotFound());
         service.AddToSpecialization(command.TypeId,command.SpecializationId);
         session.ServiceRepository.Update(service);

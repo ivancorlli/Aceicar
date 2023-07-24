@@ -35,12 +35,14 @@ public static class WolverineExtension
             o.Discovery.IncludeAssembly(typeof(NotificationSystem.Infrastructure.Extension.Index).Assembly);
 
             // - UserContext
-            o.Discovery.IncludeAssembly(typeof(UserContext.Application.Feature.ApplicationUser.Command.CreateUser.CreateUserHandler).Assembly);
+            o.Discovery.IncludeAssembly(typeof(UserContext.Application.Feature.User.Command.CreateUser.CreateUserHandler).Assembly);
             o.Discovery.IncludeAssembly(typeof(UserContext.Infrastructure.Extension.Index).Assembly);
 
             // - Company
             o.Discovery.IncludeAssembly(typeof(CompanyContext.Infrastructure.Extension.Index).Assembly);
-            o.Discovery.IncludeAssembly(typeof(CompanyContext.Application.Feature.Category.Command.CreateCategory.CreateCategoryCommand).Assembly);
+            o.Discovery.IncludeAssembly(typeof(CompanyContext.Application.Feature.Category.Command.CreateCategory.CreateCategoryHandler).Assembly);
+            o.Discovery.IncludeAssembly(typeof(CompanyContext.Api.Controller.Category.AddToSpecialization).Assembly);
+            
         });
 
         services.AddResourceSetupOnStartup();

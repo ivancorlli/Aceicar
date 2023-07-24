@@ -1,14 +1,11 @@
 using Marten;
 using Marten.Events.Projections;
-using Marten.Schema;
 using Marten.Services.Json;
-using Marten.Storage;
 using UserContext.Application.ViewModel;
 using UserContext.Core.Aggregate;
 using UserContext.Core.Event.UserEvent;
 using UserContext.Infrastructure.Projection.UserAccountProjection;
 using Weasel.Core;
-using Weasel.Core.Migrations;
 
 namespace UserContext.Infrastructure.Data;
 
@@ -24,8 +21,8 @@ public static class UserContextOptions
         casing: Casing.CamelCase
         );
         option.AutoCreateSchemaObjects = Weasel.Core.AutoCreate.CreateOrUpdate;
-        option.Schema.For<User>().Identity(x => x.Id).SingleTenanted();
-        option.Schema.For<UserAccount>().Identity(x => x.Id).SingleTenanted();
+        option.Schema.For<User>().Identity(x => x.Id);
+        option.Schema.For<UserProjection>().Identity(x => x.Id);
         // Register events
         option.Events.AddEventType(typeof(UserCreated));
         option.Events.AddEventType(typeof(EmailChanged));
@@ -37,8 +34,8 @@ public static class UserContextOptions
         option.Events.AddEventType(typeof(LocationModified));
         option.Events.AddEventType(typeof(TimeZoneModified));
         // Projections
-        option.Projections.LiveStreamAggregation<User>().SingleTenanted();
-        option.Projections.Add<UserAccountProjection>(ProjectionLifecycle.Inline);
+        option.Projections.LiveStreamAggregation<User>().Identity(x=>x.Id);
+        option.Projections.Add<UserProjector>(ProjectionLifecycle.Inline);
         return option;
     }
 }

@@ -9,8 +9,8 @@ public sealed class Service : IUseArea
     public Guid Id { get; private set; }
     public string Name { get; private set; } = default!;
     public ServiceStatus Status { get; private set; } = default!;
-    private IList<Requirement> _requires { get; set; } = new List<Requirement>();
-    public IEnumerable<Requirement> Requires => _requires;
+    private IList<Requirement> _requirements { get; set; } = new List<Requirement>();
+    public IEnumerable<Requirement> Requirments => _requirements;
 
     internal Service(string name)
     {
@@ -22,11 +22,11 @@ public sealed class Service : IUseArea
     public void RequireProduct(Guid categoryId)
     {
         // search if exist any 
-        IList<Requirement> exists = _requires.Where(x => x.CategoryId == categoryId).ToList();
+        IList<Requirement> exists = _requirements.Where(x => x.CategoryId == categoryId).ToList();
         if (exists.Count > 0)
         {
             // Search if there is on unique
-            Requirement? type = _requires.Where(x => x.CategoryId == categoryId && x.SubCategoryId == null).SingleOrDefault();
+            Requirement? type = _requirements.Where(x => x.CategoryId == categoryId && x.SubCategoryId == null).SingleOrDefault();
             // If there is not one unique, get all the subcategories and delete it
             if (type == null)
             {
@@ -35,43 +35,43 @@ public sealed class Service : IUseArea
                 {
                     foreach (Requirement item in products)
                     {
-                        _requires.Remove(item);
+                        _requirements.Remove(item);
                     }
                 }
                 // Add unique product 
                 Requirement product = new Requirement(categoryId);
-                _requires.Add(product);
+                _requirements.Add(product);
             }
         }
         else
         {
-            _requires.Add(new Requirement(categoryId));
+            _requirements.Add(new Requirement(categoryId));
         }
     }
 
     public void RequireProduct(Guid categoryId, Guid subCategoryId)
     {
         // Search if exists any subcategory related with the service
-        IList<Requirement> exist = _requires.Where(x => x.CategoryId == categoryId).ToList();
+        IList<Requirement> exist = _requirements.Where(x => x.CategoryId == categoryId).ToList();
         if (exist.Count > 0)
         {
             // Search if there is one category realted and delete it
-            Requirement? category = _requires.Where(x => x.CategoryId == categoryId && x.SubCategoryId == null).SingleOrDefault();
+            Requirement? category = _requirements.Where(x => x.CategoryId == categoryId && x.SubCategoryId == null).SingleOrDefault();
             if (category != null)
             {
-                _requires.Remove(category);
+                _requirements.Remove(category);
             }
             // search if exists the same subcategory
-            Requirement? subcategory = _requires.Where(x => x.CategoryId == categoryId && x.SubCategoryId == subCategoryId).SingleOrDefault();
+            Requirement? subcategory = _requirements.Where(x => x.CategoryId == categoryId && x.SubCategoryId == subCategoryId).SingleOrDefault();
             if (subcategory == null)
             {
-                _requires.Add(new Requirement(categoryId, subCategoryId));
+                _requirements.Add(new Requirement(categoryId, subCategoryId));
             }
 
         }
         else
         {
-            _requires.Add(new Requirement(categoryId, subCategoryId));
+            _requirements.Add(new Requirement(categoryId, subCategoryId));
         }
     }
 

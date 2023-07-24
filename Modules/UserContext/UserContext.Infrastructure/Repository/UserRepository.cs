@@ -53,15 +53,16 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> FindById(Guid Id)
     {
-        var result = await _session.Events.FetchForWriting<User>(Id);
-        if (result != null) return result.Aggregate;
+        using IQuerySession _query = _store.QuerySession();
+        var result = await _query.Events.AggregateStreamAsync<User>(Id);
+        if (result != null) return result;
         else return null;
     }
 
     public async Task<bool> IsEmailUsed(Email Email)
     {
         using IQuerySession  _query = _store.QuerySession();
-        IEnumerable<UserAccount> result = await _query.Query<UserAccount>().Where(x => x.Email.ToLower() == Email.Value.ToLower()).ToListAsync();
+        IEnumerable<UserProjection> result = await _query.Query<UserProjection>().Where(x => x.Email.ToLower() == Email.Value.ToLower()).ToListAsync();
         if (result.Count() > 0) return true;
         else return false;
     }
@@ -69,10 +70,12 @@ public class UserRepository : IUserRepository
     public async Task<bool> IsPhoneUsed(Phone Phone)
     {
         using IQuerySession  _query = _store.QuerySession();
-        IEnumerable<UserAccount> result = await _query.Query<UserAccount>().Where(
-            x => x.Phone != null &&
-            x.Phone.Country.ToUpper() == Phone.Country.ToUpper() &&
-            x.Phone.Number == Phone.Number
+        IEnumerable<UserProjection> result = await _query.Query<UserProjection>().Where(
+            x => 
+            x.PhoneNumber != null &&
+            x.PhoneCountry != null &&
+            x.PhoneCountry.ToUpper() == Phone.Country.ToUpper() &&
+            x.PhoneNumber == Phone.Number
             ).ToListAsync();
         if (result.Count() > 0) return true;
         else return false;
@@ -81,7 +84,7 @@ public class UserRepository : IUserRepository
     public async Task<bool> IsUsernameUsed(Username Username)
     {
         using IQuerySession  _query = _store.QuerySession();
-        IEnumerable<UserAccount> result = await _query.Query<UserAccount>().Where(x => x.Username != null && x.Username.ToLower() == Username.Value.ToLower()).ToListAsync();
+        IEnumerable<UserProjection> result = await _query.Query<UserProjection>().Where(x => x.Username != null && x.Username.ToLower() == Username.Value.ToLower()).ToListAsync();
         if (result.Count() > 0) return true;
         else return false;
     }

@@ -1,18 +1,16 @@
 'use client'
 import EnterPin from '@/component/Input/EnterPin'
-import IUser from '@/lib/interface/IUser'
-import { Button, Container, Heading, Text, VStack } from '@chakra-ui/react'
+import IUser from '@/lib/interface/IMyAccount'
+import { Button, Container, Heading, Text, VStack, useToast } from '@chakra-ui/react'
 import { redirect, useRouter } from 'next/navigation'
 import React, { FormEvent, useState } from 'react'
 
-const PhoneVerification = ({user}:{user:IUser | null}) => {
-    if(user != null)
-    {
-        if(user.Phone != undefined)
-        {
-            if(user.Phone.Verified)
-            {
-               return redirect("/quickstart?num=1")
+const PhoneVerification = ({ user }: { user: IUser | null }) => {
+    const toast = useToast()
+    if (user != null) {
+        if (user.phone != undefined) {
+            if (user.phone.verified) {
+                return redirect("/quickstart?num=1")
             }
         }
     }
@@ -32,7 +30,16 @@ const PhoneVerification = ({user}:{user:IUser | null}) => {
 
     function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault()
-        handleForm()
+        if (code.length === 6) {
+            handleForm()
+        } else {
+            toast({
+                title: "Debe ingresar un codigo valido",
+                status: "error",
+                position: "top",
+                isClosable: true,
+            })
+        }
     }
 
 
@@ -46,11 +53,11 @@ const PhoneVerification = ({user}:{user:IUser | null}) => {
                     Hemos enviado un codigo de verificacion a tu numero de telefono.
                 </Text>
             </VStack>
-            <Container w={["100%","80%"]}>
+            <Container w={["100%", "80%"]}>
                 <form onSubmit={(e) => handleSubmit(e)} style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "2rem" }}>
 
                     <EnterPin code={code} handleChange={handleChange} />
-                    <Button type="submit" bg="brand.100" color="white" variant='solid' w={["100%", "100%","50%"]} _hover={{ bg: "black" }}>
+                    <Button type="submit" bg="brand.100" color="white" variant='solid' w={["100%", "100%", "50%"]} _hover={{ bg: "black" }}>
                         Continuar
                     </Button>
                 </form>

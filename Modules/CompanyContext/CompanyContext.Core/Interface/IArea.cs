@@ -8,6 +8,11 @@ public abstract record IArea
     /// </summary>
     /// <value></value> 
     public Guid? SpecializationId { get;} 
-    internal IArea (Guid typeId){}
-    internal IArea(Guid typeId, Guid specializationId){}
+    internal IArea (Guid typeId){
+        TypeId = typeId;
+    }
+    internal IArea(Guid typeId, Guid specializationId){
+        TypeId = typeId;
+        SpecializationId = specializationId;
+    }
 }

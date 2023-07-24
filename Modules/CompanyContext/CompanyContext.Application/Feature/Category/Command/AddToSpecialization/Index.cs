@@ -14,7 +14,7 @@ public static class AddCategoryToSpecializationHandler
         CancellationToken cancellationToken
     )
     {
-        CompanyContext.Core.Aggregate.Category? category = await session.CategoryRespository.GetById(command.CategoryId);
+        CompanyContext.Core.Aggregate.Category? category = await session.CategoryRespository.FindById(command.CategoryId);
         if(category == null) return OperationResult.NotFound(new CategoryNotFound());
         category.AddToSpecialization(command.TypeId,command.SpecializationId);
         await session.SaveChangesAsync(cancellationToken);

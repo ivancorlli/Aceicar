@@ -39,15 +39,12 @@ public static class ResultConversor
 
         return response;
     }
-        public static Microsoft.AspNetCore.Http.IResult Convert<T>(IOperationResult<T> result,string? url="")
+        public static Microsoft.AspNetCore.Http.IResult Convert<T>(IOperationResult<T> result)
     {
         Microsoft.AspNetCore.Http.IResult response = Results.Empty;
         IError error = result.Errors.SingleOrDefault()!;
         switch (result.ResultType)
         {
-            case OperationResultType.Created:
-                response = TypedResults.Created<T>(url??"",result.Data);
-                break;
             case OperationResultType.Ok:
                 response = TypedResults.Ok(result.Data);
                 break;

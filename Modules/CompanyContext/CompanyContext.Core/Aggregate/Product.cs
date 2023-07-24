@@ -5,14 +5,14 @@ namespace CompanyContext.Core.Aggregate;
 
 public sealed class Product:IProduct
 {
-
-    internal static Product Create(ProductCreated @event)
+    public static Product Create(ProductCreatedForCategory @event)
     {
-        return new Product()
+        Product newProduct = new()
         {
             Id = @event.ProductId,
-            CategoryId = @event.CategoryId,
+            Code = @event.Code.Trim().ToUpper()
         };
+        return newProduct;
     }
     
 }

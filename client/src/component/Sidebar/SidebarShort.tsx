@@ -2,7 +2,7 @@ import { Box, Container, Divider, Icon, Skeleton, Tooltip, VStack, useColorMode 
 import React from 'react'
 import { usePathname } from 'next/navigation'
 import { BiSolidHome } from 'react-icons/bi'
-import { SlHome, SlLogin, SlLogout, SlSettings, SlSupport } from 'react-icons/sl'
+import { SlActionUndo, SlHome, SlLogin, SlLogout, SlSettings, SlSupport } from 'react-icons/sl'
 import { IoCarSport, IoCarSportOutline, IoSettingsSharp, IoSpeedometerOutline, IoSpeedometerSharp } from 'react-icons/io5'
 import { MdSupport } from 'react-icons/md'
 import { PiShoppingBagFill, PiShoppingBagLight } from 'react-icons/pi'
@@ -11,11 +11,12 @@ import ProfileIcon from './Button/ProfileIcon'
 import { useUser } from '@auth0/nextjs-auth0/client'
 import { useAccount } from '@/hook/myAccount'
 import Link from 'next/link'
+import { useAccess } from '@/hook/userAccess'
 
 const SidebarShort = () => {
-    const { colorMode } = useColorMode();
     const { user: auth, isLoading } = useUser();
     const { user } = useAccount()
+    const { access } = useAccess(user?.userId);
     const path = usePathname();
     return (
         <VStack
@@ -26,8 +27,6 @@ const SidebarShort = () => {
             spacing={10}
             paddingY='15px'
             justifyContent="space-between"
-            borderRight='1px'
-            borderColor={colorMode == 'light' ? 'gray.100' : 'whiteAlpha.200'}
         >
             <Container w='100%' m="0" px="5px" >
                 <VStack w='100%' spacing={2} alignItems='center' justifyContent="center">
@@ -56,13 +55,20 @@ const SidebarShort = () => {
                                             <IconButton icon={path === "/mycars" ? IoCarSport : IoCarSportOutline} text='Vehiculos' link='/mycars' />
                                             <IconButton icon={path === "/mybills" ? IoSpeedometerSharp : IoSpeedometerOutline} text='Resumen' link='/mybills' />
                                             <IconButton icon={path === "/support" ? MdSupport : SlSupport} text='Soporte' link='/support' />
-                                            <IconButton icon={path === "/settings" ? IoSettingsSharp : SlSettings} text='Configuracion' link='/settings' />
-                                            <IconButton icon={path === "/business" ? PiShoppingBagFill : PiShoppingBagLight} text='Registra tu negocio' link='/business' />
+                                            {
+                                                access != null && access.length > 0 ?
+                                                    access.length == 1 ?
+                                                        <IconButton icon={PiShoppingBagLight} text={`Ingresa a ${access[0].company.name}`} link={`/api/access/login/${access[0].accessId}`} />
+                                                        :
+                                                        <IconButton icon={path === "/dashboard" ? PiShoppingBagFill : PiShoppingBagLight} text='Tus accesos' link='/dashboard' />
+                                                    :
+                                                    <IconButton icon={path === "/create-a-company" ? PiShoppingBagFill : PiShoppingBagLight} text='Registra tu negocio' link='/create-a-company' />
+                                            }
                                         </>
                                         :
                                         <>
                                             <IconButton icon={path === "/support" ? MdSupport : SlSupport} text='Soporte' link='/support' />
-                                            <IconButton icon={path === "/business" ? PiShoppingBagFill : PiShoppingBagLight} text='Registra tu negocio' link='/business' />
+                                            <IconButton icon={path === "/create-a-company" ? PiShoppingBagFill : PiShoppingBagLight} text='Registra tu negocio' link='/create-a-company' />
                                         </>
                                 }
                             </>
@@ -90,14 +96,14 @@ const SidebarShort = () => {
                                     {
                                         auth != undefined && user
                                             ? <>
-                                                <ProfileIcon text={user.Profile?.Name && user.Profile?.Surname ? `${user.Profile?.Name} ${user.Profile?.Surname}` : undefined} src={user.Picture ? user.Picture : user.Email} link={`/user/${user.UserId}`} />
+                                                <ProfileIcon text={user.profile?.name && user.profile?.surname ? `${user.profile?.name} ${user.profile?.surname}` : undefined} src={user.picture ? user.picture : ""} link={`/user/${user.userId}`} />
                                                 <Link href={"/api/auth/logout"} prefetch={false} style={{ width: "100%" }} >
                                                     <Tooltip
                                                         label={"Cerrar sesion"}
                                                     >
                                                         <Box
                                                             _hover={{ bg: "brand.100", color: "white", borderRadius: "md" }}
-                                                            bg={"white"}
+                                                            bg={"brand.200"}
                                                             color={"brand.100"}
                                                             borderRadius={"none"}
                                                             padding="7px"

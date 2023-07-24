@@ -1,14 +1,13 @@
-using CompanyContext.Core.Interface;
-
 namespace CompanyContext.Core.ValueObject;
 
-public sealed record CompanyArea : IArea
+public sealed record CompanyArea
 {
-    public CompanyArea(Guid typeId) : base(typeId)
-    {
-    }
+    public Guid TypeId { get; private set; }
+    public Guid SpecializationId { get; private set; }
 
-    public CompanyArea(Guid typeId, Guid specializationId) : base(typeId, specializationId)
+    internal CompanyArea(Guid typeId, Guid specializationId)
     {
+        TypeId = typeId;
+        SpecializationId = specializationId;
     }
 }

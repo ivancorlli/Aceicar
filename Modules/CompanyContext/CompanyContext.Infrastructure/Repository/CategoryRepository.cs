@@ -17,7 +17,7 @@ public class CategoryRepository : ICategoryRepository
     }
     public async void Update(Category Root)
     {
-        await Context.Category.AddAsync(Root);
+        await Context.Category.Update(Root).ReloadAsync();
     }
 
     public async void Update(SubCategory Entity)
@@ -25,7 +25,7 @@ public class CategoryRepository : ICategoryRepository
         await Context.SubCategory.AddAsync(Entity);
     }
 
-    public async Task<Category?> GetById(Guid CategoryId)
+    public async Task<Category?> FindById(Guid CategoryId)
     {
         Category? data = await Context.Category.FindAsync(CategoryId);
         return data;
@@ -33,8 +33,13 @@ public class CategoryRepository : ICategoryRepository
 
     public async Task<bool> IsNameUsed(string Name)
     {
-        IList<Category> categories = await Context.Category.Where(x=>x.Name.Trim() == Name.Trim().ToLower()).Include(x=>x.SubCategories).ToListAsync();
-        if(categories.Count > 0) return true;
+        IList<Category> categories = await Context.Category.Where(x => x.Name.Trim() == Name.Trim().ToLower()).Include(x => x.SubCategories).ToListAsync();
+        if (categories.Count > 0) return true;
         return false;
+    }
+
+    public async void CreateAsync(Category Root)
+    {
+        await Context.Category.AddAsync(Root);
     }
 }

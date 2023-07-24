@@ -1,6 +1,5 @@
 using Common.Basis.Interface;
 using Common.Basis.Utils;
-using CompanyContext.Core.Aggregate;
 using CompanyContext.Core.Entity;
 using CompanyContext.Core.Error;
 using CompanyContext.Core.Repository;
@@ -16,7 +15,7 @@ public static class DeactivateSpecializationHandler
         CancellationToken cancellationToken
     )
     {
-        Core.Aggregate.Type? type = await session.TypeRepository.GetById(command.TypeId);
+        Core.Aggregate.Type? type = await session.TypeRepository.FindById(command.TypeId);
         if(type == null ) return OperationResult.NotFound(new TypeNotFound());
         Specialization? specialization = type.Specializations.Where(x=>x.Id == command.SpecializationId).First();
         if(specialization == null) return OperationResult.NotFound(new SpecializationNotFound());

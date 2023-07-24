@@ -1,0 +1,29 @@
+export default interface IUser {
+    userId:string
+    status:string
+    createdAt:string
+    email:{
+        value:string,
+        verified:boolean
+    }
+    username?:string
+    phone?:{
+        number:string,
+        verified:boolean
+    }
+    picture?:string
+    profile?:{
+        name:string,
+        surname:string,
+        gender:string,
+        birth:string
+    }
+    location?:{
+        country:string,
+        city:string,
+        state:string,
+        postalCode:string,
+        street?:string,
+        streetNumber?:string
+    }
+}

@@ -7,10 +7,10 @@ using Wolverine;
 namespace CompanyContext.Api.Controller.Category;
 
 
-public sealed record NewCategoryRequest(string Name);
 public static class NewCategory
 {
-    public  static async Task<Microsoft.AspNetCore.Http.IResult> Execute(
+    public sealed record NewCategoryRequest(string Name);
+    public static async Task<Microsoft.AspNetCore.Http.IResult> Execute(
         [FromBody] NewCategoryRequest Body,
         IMessageBus Bus
     )
@@ -19,5 +19,5 @@ public static class NewCategory
         IOperationResult result = await Bus.InvokeAsync<IOperationResult>(command);
         return ResultConversor.Convert(result);
     }
-    
+
 }

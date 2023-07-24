@@ -1,15 +1,22 @@
-using Common.Basis.Aggregate;
+using CompanyContext.Core.Event;
 
 namespace CompanyContext.Core.Interface;
 
-public abstract class IProduct:IAggregate
+public abstract class IProduct
 {
-    public Guid CategoryId {get; protected set;} = default!;
-    public Guid? SubCategoryId {get; protected set;} = default!;
-    public Guid? BrandId {get; protected set;} = default!;
-    public string Code {get; protected set;} = default!;
-    public string Name {get; protected set;} = default!;
-    public string? Description {get; protected set;} = default!;
-    private IList<string> _images {get;set;} = new List<string>();
-    public IEnumerable<string> Images => _images.AsReadOnly();   
+    public Guid Id { get; protected set; } = default!;
+    public string Code { get; protected set; } = default!;
+    public IList<string> Images { get;private set; } = new List<string>();
+    public void Apply(ImageAdded @event)
+    {
+        Images.Add(@event.Image);
+    }
+    public void Apply(ImageDeleted @event)
+    {
+        IList<string> exists = Images.Where(x=>x == @event.Image).ToList();
+        if(exists.Count > 0)
+        {
+            Images.Remove(exists.First());
+        }
+    }
 }

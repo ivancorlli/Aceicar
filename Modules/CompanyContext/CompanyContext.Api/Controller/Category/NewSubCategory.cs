@@ -7,17 +7,17 @@ using Wolverine;
 namespace CompanyContext.Api.Controller.Category;
 
 
-public sealed record NewSubCategoryRequest(string Name);
 public static class NewSubCategory
 {
+    public sealed record NewSubCategoryRequest(string Name);
     public static async Task<Microsoft.AspNetCore.Http.IResult> Execute(
         [FromBody] NewSubCategoryRequest Body,
         [FromRoute] Guid CategoryId,
-        IMessageBus Bus 
+        IMessageBus Bus
     )
     {
-        CreateSubCategoryCommand command = new(CategoryId,Body.Name);
+        CreateSubCategoryCommand command = new(CategoryId, Body.Name);
         IOperationResult result = await Bus.InvokeAsync<IOperationResult>(command);
         return ResultConversor.Convert(result);
-    } 
+    }
 }

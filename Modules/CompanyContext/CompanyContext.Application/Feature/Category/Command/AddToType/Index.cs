@@ -14,9 +14,10 @@ public static class AddCategoryToTypeHandler
         CancellationToken cancellationToken
     )
     {
-        CompanyContext.Core.Aggregate.Category? category = await session.CategoryRespository.GetById(command.CategoryId);
+        CompanyContext.Core.Aggregate.Category? category = await session.CategoryRespository.FindById(command.CategoryId);
         if(category == null) return OperationResult.NotFound(new CategoryNotFound());
         category.AddToType(command.TypeId);
+        session.CategoryRespository.Update(category);
         await session.SaveChangesAsync(cancellationToken);
         return OperationResult.Success();
     }

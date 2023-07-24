@@ -1,17 +1,14 @@
 using Marten;
-using Marten.Events;
 using Marten.Events.Daemon.Resiliency;
-using Marten.Services.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using UserContext.Application.Service;
+using UserContext.Application.Interface;
 using UserContext.Core.Repository;
 using UserContext.Core.Service;
 using UserContext.Infrastructure.Data;
+using UserContext.Infrastructure.Query;
 using UserContext.Infrastructure.Repository;
-using UserContext.Infrastructure.Service;
-using Weasel.Core;
 
 namespace UserContext.Infrastructure.Extension;
 public static class Index
@@ -27,6 +24,7 @@ public static class Index
         .AddAsyncDaemon(DaemonMode.HotCold)
         .OptimizeArtifactWorkflow()
         ;
+        service.InstallQuery();
         service.InstallRepository();
         return service;
     }
@@ -36,8 +34,12 @@ public static class Index
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<UserManager>();
 
-        // appliaction services
-        services.AddScoped<IUserAccountService, UserAccountService>();
+        return services;
+    }
+
+    internal static IServiceCollection InstallQuery(this IServiceCollection services)
+    {
+        services.AddScoped<IApplicationQuery,EventStoreQuery>();
         return services;
     }
 

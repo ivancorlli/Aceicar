@@ -14,7 +14,7 @@ public static class DeactivateTypeHandler
         CancellationToken token
     )
     {
-        Core.Aggregate.Type? companyType = await session.TypeRepository.GetById(command.TypeId);
+        Core.Aggregate.Type? companyType = await session.TypeRepository.FindById(command.TypeId);
         if(companyType == null) return OperationResult.NotFound(new TypeNotFound());
         companyType.Deactivate();
         await session.SaveChangesAsync(token);

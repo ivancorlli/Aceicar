@@ -1,7 +1,7 @@
 'use client'
 
 import UserAccount from "@/component/Card/UserAccount";
-import { Button, Container, HStack, Heading, Input, InputGroup, Image, InputLeftAddon, VStack } from "@chakra-ui/react";
+import { Button, Container, HStack, Heading, Input, InputGroup, InputLeftAddon, VStack, useToast } from "@chakra-ui/react";
 import { useSearchParams, useRouter, redirect } from "next/navigation";
 import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { QuickStartContext } from "./QuickStartLayout";
@@ -9,8 +9,10 @@ import PhoneVerification from "./PhoneVerification";
 import ProfileConfiguration from "./ProfileConfiguration";
 import SearchSelect, { SelectOptions } from "@/component/Input/SearchSelect";
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client'
-import {useAccount, usePostAccount} from "@/hook/myAccount";
-import IUser from "@/lib/interface/IUser";
+import { useAccount, usePostAccount, usePostLocation } from "@/hook/myAccount";
+import IUser from "@/lib/interface/IMyAccount";
+import ProfileCompletedPic from "../../../public/ProfileCompleted.png"
+import Image from "next/image";
 
 async function fetcher(search: string): Promise<SelectOptions[]> {
     const res = await fetch(`https://api.teleport.org/api/cities/?search=${search}`)
@@ -80,10 +82,11 @@ function QuickStartPage() {
 
 
 function SetpOne({ user }: { user: IUser | null }) {
-    const {post,isLoading} = usePostAccount()
+    const toast = useToast()
+    const { post, isLoading } = usePostAccount()
     if (user != null) {
-        if (user.Username != undefined && user.Phone != undefined) {
-            if (user.Phone.Verified) {
+        if (user.username != undefined && user.phone != undefined) {
+            if (user.phone.verified) {
                 return redirect("/quickstart?num=1")
             } else {
                 return redirect("/quickstart?num=0")
@@ -93,9 +96,10 @@ function SetpOne({ user }: { user: IUser | null }) {
     interface SetpOneForm {
         username: string,
         phoneCountry: string,
-        phoneNumber: string
+        phoneNumber: string,
+        userId: string
     }
-    const [form, setForm] = useState<SetpOneForm>({ username: user?.Username ?? "", phoneCountry: "ARG", phoneNumber: user?.Phone?.Number ?? "" });
+    const [form, setForm] = useState<SetpOneForm>({ username: user?.username ?? "", phoneCountry: "ARG", phoneNumber: user?.phone?.number ?? "", userId: user?.userId ?? "" });
     const router = useRouter()
 
     function handleChange(e: ChangeEvent<HTMLInputElement>) {
@@ -107,7 +111,31 @@ function SetpOne({ user }: { user: IUser | null }) {
 
     function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault()
-        post(form,()=>router.push("/quickstart?num=0"))
+        if (validateSubmit()) {
+
+            post(form)
+            router.push("/quickstart?num=0")
+        } else {
+            toast({
+                title: "Debe completar los datos de la cuenta",
+                status: "error",
+                position: "top",
+                isClosable: true,
+            })
+        }
+    }
+    function validateSubmit(): boolean {
+        let isValid: boolean = false
+        if
+            (
+            form.username != "" &&
+            form.userId != "" &&
+            form.phoneCountry != "" &&
+            form.phoneNumber != ""
+        ) {
+            isValid = true
+        }
+        return isValid;
     }
 
     return (
@@ -117,7 +145,7 @@ function SetpOne({ user }: { user: IUser | null }) {
                     Completa tu cuenta
                 </Heading>
                 <VStack w="100%">
-                    <UserAccount form={{ username: form.username, phoneNumber: form.phoneNumber }} image={user?.Picture} />
+                    <UserAccount form={{ username: form.username, phoneNumber: form.phoneNumber }} image={user?.picture} />
                     <Container w={["100%", "80%", "40%"]}>
                         <form onSubmit={(e) => handleSubmit(e)} style={{ width: "100%%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "2rem" }}>
                             <VStack w="100%">
@@ -129,7 +157,7 @@ function SetpOne({ user }: { user: IUser | null }) {
                             </VStack>
                             <Button type="submit" bg="brand.100" color="white" variant='solid' w="50%" _hover={{ bg: "black" }}>
                                 {
-                                    isLoading?"Enviando...":"Continuar"
+                                    isLoading ? "Enviando..." : "Continuar"
                                 }
                             </Button>
                         </form>
@@ -143,8 +171,9 @@ function SetpOne({ user }: { user: IUser | null }) {
 
 
 function LocationConfiguration({ user }: { user: IUser | null }) {
+    const toast = useToast()
     if (user != null) {
-        if (user.Location != undefined) {
+        if (user.location != undefined) {
             return redirect("/")
         }
     }
@@ -154,10 +183,12 @@ function LocationConfiguration({ user }: { user: IUser | null }) {
         state: string,
         postalCode: string,
         street: string,
-        streetNumber: string
+        streetNumber: string,
+        userId: string
     }
     const router = useRouter()
-    const [form, setForm] = useState<LocationForm>({ country: "", city: "", state: "", postalCode: "", street: "", streetNumber: "" });
+    const [form, setForm] = useState<LocationForm>({ country: "", city: "", state: "", postalCode: "", street: "", streetNumber: "", userId: user?.userId ?? "" });
+    const { post, isLoading } = usePostLocation()
 
     async function onSelect(e: SelectOptions): Promise<void> {
         const data = await fetch(e.value);
@@ -166,7 +197,7 @@ function LocationConfiguration({ user }: { user: IUser | null }) {
             ...form,
             country: res._links["city:country"].name,
             city: res._links["city:admin1_division"].name,
-            state: res.name
+            state: res.name,
         })
     }
 
@@ -179,7 +210,7 @@ function LocationConfiguration({ user }: { user: IUser | null }) {
 
     function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault()
-        console.log(form)
+        post(form)
         router.push("/quickstart?num=3")
     }
 
@@ -201,8 +232,9 @@ function LocationConfiguration({ user }: { user: IUser | null }) {
                         </VStack>
                     </VStack>
                     <Button type="submit" bg="brand.100" color="white" variant='solid' w="50%" _hover={{ bg: "black" }}>
-
-                        Continuar
+                        {
+                            isLoading ? "Enviando.." : "Continuar"
+                        }
                     </Button>
                 </form>
             </Container>
@@ -213,15 +245,15 @@ function LocationConfiguration({ user }: { user: IUser | null }) {
 
 
 function ProfileCompleted() {
-    const {push} = useRouter()
+    const { push } = useRouter()
     return (
         <>
             <VStack w="100%">
-                <Image src="/public/ProfileCompleted.png" alt='Profile Completed' width={100} height={100} />
-                <Button onClick={()=>push("/")} type="submit" bg="brand.100" color="white" variant='solid' w="50%" _hover={{ bg: "black" }}>
+                <Image src={ProfileCompletedPic} alt='Profile Completed' width={200} height={200} />
+                <Button onClick={() => push("/")} type="submit" bg="brand.100" color="white" variant='solid' w="50%" _hover={{ bg: "black" }}>
                     Volver a inicio
                 </Button>
-                <Button onClick={()=>push("/vehicles")} type="submit" bg="brand.100" color="white" variant='solid' w="50%" _hover={{ bg: "black" }}>
+                <Button onClick={() => push("/vehicles")} type="submit" bg="brand.100" color="white" variant='solid' w="50%" _hover={{ bg: "black" }}>
                     Registrar vehiculo
                 </Button>
             </VStack>

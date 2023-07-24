@@ -13,7 +13,8 @@ public class CompanyDbContext : DbContext
     public DbSet<Specialization> Specialization => Set<Specialization>();
     public DbSet<Category> Category => Set<Category>();
     public DbSet<SubCategory> SubCategory => Set<SubCategory>();
-    public DbSet<Service> Service => Set<Service>(); 
+    public DbSet<Service> Service => Set<Service>();
+    public DbSet<Role> Role => Set<Role>(); 
     public CompanyDbContext(DbContextOptions options) : base(options)
     {
     }
@@ -26,8 +27,9 @@ public class CompanyDbContext : DbContext
         modelBuilder.ApplyConfiguration(new CategoryConfiguration());
         modelBuilder.ApplyConfiguration(new SpecializationConfiguration());
         modelBuilder.ApplyConfiguration(new SubCategoryConfiguration());
-        modelBuilder.ApplyConfiguration(new CategoryAreaConfiguration());
+        // modelBuilder.ApplyConfiguration(new CategoryAreaConfiguration());
         modelBuilder.ApplyConfiguration(new ServiceAreaConfiguration());
         modelBuilder.ApplyConfiguration(new ServiceConfiguration());
+        modelBuilder.ApplyConfiguration(new RoleConfiguration());
     }
 }

@@ -1,4 +1,4 @@
-using CompanyContext.Api.Controller;
+using CompanyContext.Api.Controller.Company;
 
 namespace CompanyContext.Api.Routes;
 
@@ -6,7 +6,7 @@ public static class CompanyRouter
 {
     internal static IEndpointRouteBuilder CompanyEndpoints(this IEndpointRouteBuilder route)
     {
-        route.MapGroup("/company")
+        route.MapGroup("/companies")
         .CompanyPost()
         .CompanyGet();
         return route;
@@ -14,11 +14,14 @@ public static class CompanyRouter
 
     private static IEndpointRouteBuilder CompanyPost(this IEndpointRouteBuilder endpoint)
     {
-
+        endpoint.MapPatch("/{companyId}/contact-data",ChangeContactData.Execute);
+        endpoint.MapPatch("/{companyId}/location",ChangeLocation.Execute);
+        endpoint.MapPost("/", CreateCompany.Execute);
         return endpoint;
     }
     private static IEndpointRouteBuilder CompanyGet(this IEndpointRouteBuilder endpoint)
     {
+        endpoint.MapGet("/accesses/{accessId}",CompanyLogged.Execute);
         return endpoint;
     }
 

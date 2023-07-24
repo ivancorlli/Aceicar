@@ -15,7 +15,7 @@ public static class CreateSpecializationHandler
         CancellationToken token
     )   
     {
-        Core.Aggregate.Type? type = await session.TypeRepository.GetById(command.TypeId);
+        Core.Aggregate.Type? type = await session.TypeRepository.FindById(command.TypeId);
         if(type == null) return OperationResult.NotFound(new TypeNotFound());
         Result<Specialization> result = type.AddSpecialization(command.Name);
         if(result.IsFailure) return OperationResult.Invalid(result.Error);

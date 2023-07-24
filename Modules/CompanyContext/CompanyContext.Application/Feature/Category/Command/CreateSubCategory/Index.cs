@@ -15,7 +15,7 @@ public static class CreateSubCategoryHandler
         CancellationToken cancellationToken   
     )   
     {
-        CompanyContext.Core.Aggregate.Category? category = await session.CategoryRespository.GetById(command.CategoryId);
+        CompanyContext.Core.Aggregate.Category? category = await session.CategoryRespository.FindById(command.CategoryId);
         if(category == null) return OperationResult.NotFound(new CategoryNotFound());
         Result<SubCategory> subCategory = category.CreateSubCategory(command.Name);
         if(subCategory.IsFailure) return OperationResult.Invalid(subCategory.Error);

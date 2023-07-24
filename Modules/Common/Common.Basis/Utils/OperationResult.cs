@@ -24,7 +24,7 @@ public sealed class OperationResult : IOperationResult
     {
         OperationResult result = new();
         result.ResultType = OperationResultType.Invalid;
-        result.Errors = new() { error ?? new OperationResultError()};
+        result.Errors = new() { error ?? new OperationResultError() };
         return result;
     }
 
@@ -32,9 +32,25 @@ public sealed class OperationResult : IOperationResult
     {
         OperationResult result = new();
         result.ResultType = OperationResultType.NotFound;
-        result.Errors = new() { error ?? new OperationResultError()};
+        result.Errors = new() { error ?? new OperationResultError() };
         return result;
     }
+
+    public static OperationResult Unexpected(IError error)
+    {
+        OperationResult result = new();
+        result.ResultType = OperationResultType.Unexpected;
+        result.Errors = new() { error ?? new OperationResultError() };
+        return result;
+    }
+    public static OperationResult Unauthorize(IError error)
+    {
+        OperationResult result = new();
+        result.ResultType = OperationResultType.Unauthorized;
+        result.Errors = new() { error ?? new OperationResultError() };
+        return result;
+    }
+
 }
 
 public class OperationResult<T> : IOperationResult<T>
@@ -56,6 +72,14 @@ public class OperationResult<T> : IOperationResult<T>
         return result;
     }
 
+    public static OperationResult<T> Create(T data)
+    {
+        OperationResult<T> result = new(data);
+        result.ResultType = OperationResultType.Created;
+        result.Errors = new();
+        return result;
+    }
+
     public static OperationResult<T> Invalid(IError error)
     {
         OperationResult<T> result = new();
@@ -64,7 +88,7 @@ public class OperationResult<T> : IOperationResult<T>
         return result;
     }
 
-        public static OperationResult<T> NotFound(IError error)
+    public static OperationResult<T> NotFound(IError error)
     {
         OperationResult<T> result = new();
         result.ResultType = OperationResultType.NotFound;
@@ -72,4 +96,19 @@ public class OperationResult<T> : IOperationResult<T>
         return result;
     }
 
+    public static OperationResult<T> Unexpected(IError error)
+    {
+        OperationResult<T> result = new();
+        result.ResultType = OperationResultType.Unexpected;
+        result.Errors = new() { error ?? new OperationResultError() };
+        return result;
+    }
+
+        public static OperationResult<T> Unauthorize(IError error)
+    {
+        OperationResult<T> result = new();
+        result.ResultType = OperationResultType.Unauthorized;
+        result.Errors = new() { error ?? new OperationResultError() };
+        return result;
+    }
 }

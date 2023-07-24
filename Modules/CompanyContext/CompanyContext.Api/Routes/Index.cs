@@ -6,6 +6,10 @@ public static class Index
     {
         route.CompanyEndpoints();
         route.CategoryEndpoints();
+        route.TypeEndpoints();
+        route.RoleEndpoints();
+        route.AccessEndpoints();
+        route.ProductEndpoints();
         return route;
     }
 

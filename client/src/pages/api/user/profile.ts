@@ -17,8 +17,8 @@ async function handler(req:NextApiRequest,res:NextApiResponse)
             if(req.body.gender == UserGender.Male) gender = "Male"
             if(req.body.gender == UserGender.Female) gender = "Female"
             const data = await axios({
-                url:"http://localhost:5000/api/user/profile",
-                method:"POST",
+                url:`${process.env.API_URL}/users/${req.body.userId}/profile`,
+                method:"PATCH",
                 headers:{
                     Accept:"application/json",
                     Authorization:`Bearer ${session.accessToken}`
@@ -37,7 +37,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse)
             }
         }catch(e)
         {
-            res.status(400).json({ok:false,message:""})
+            res.status(500).json({ok:false,message:"Error on Api service"})
             return;
         }
     }

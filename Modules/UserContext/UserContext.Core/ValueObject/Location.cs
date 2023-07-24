@@ -1,5 +1,3 @@
-using UserContext.Core.Enumerable;
-
 namespace UserContext.Core.ValueObject;
 
 public record Location
@@ -9,15 +7,13 @@ public record Location
     public string State { get; private set; } = default!;
     public string PostalCode { get; private set; } = default!;
     public string? Steet {get;private set;} = default!;
-    public int? StreetNumber {get; private set;} =default!;
-    public LocationStatus Status { get; private set; }
+    public string? StreetNumber {get; private set;} =default!;
     private Location() { }
     public static Location Create(
         string country,
         string city,
         string state,
-        string postal,
-        LocationStatus status
+        string postal
     )
     {
         Location newLocation = new();
@@ -25,7 +21,25 @@ public record Location
         newLocation.City = city.Trim();
         newLocation.State = state.Trim();
         newLocation.PostalCode = postal.Trim();
-        newLocation.Status = status;
+        return newLocation;
+    }
+    
+    public static Location Create(
+        string country,
+        string city,
+        string state,
+        string postal,
+        string street,
+        string streetNumber
+    )
+    {
+        Location newLocation = new();
+        newLocation.Country = country.Trim();
+        newLocation.City = city.Trim();
+        newLocation.State = state.Trim();
+        newLocation.PostalCode = postal.Trim();
+        newLocation.Steet = street.Trim();
+        newLocation.StreetNumber = streetNumber.Trim();
         return newLocation;
     }
 
